@@ -561,10 +561,7 @@ async def create_checkout(
         }
         
         # Create checkout or order based on type
-        if checkout_request.checkout_type == "checkout":
-            result = shopify_integration.create_checkout(quote_data, customer_info)
-        else:
-            result = shopify_integration.create_order_from_quote(quote_data, customer_info)
+        result = shopify_integration.create_shopify_transaction(quote_data, customer_info, checkout_request.checkout_type)
         
         if result:
             return {

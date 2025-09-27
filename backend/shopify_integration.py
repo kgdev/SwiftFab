@@ -9,17 +9,22 @@ import shopify
 from typing import Dict, List, Optional, Any
 from datetime import datetime
 import logging
+from config import Config
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class ShopifyIntegration:
-    def __init__(self):
+    def __init__(self, config_path: Optional[str] = None):
         """Initialize Shopify connection"""
-        self.shop_domain = os.getenv('SHOPIFY_SHOP_DOMAIN', 'your-shop.myshopify.com')
-        self.access_token = os.getenv('SHOPIFY_ACCESS_TOKEN', 'your-access-token')
-        self.api_version = os.getenv('SHOPIFY_API_VERSION', '2024-01')
+        # Load configuration
+        self.config = Config(config_path)
+        shopify_config = self.config.get_shopify_config()
+        
+        self.shop_domain = shopify_config['shop_domain']
+        self.access_token = shopify_config['access_token']
+        self.api_version = shopify_config['api_version']
         
         # Configure Shopify session
         shopify.ShopifyResource.set_site(f"https://{self.shop_domain}/admin/api/{self.api_version}")
@@ -96,10 +101,17 @@ class ShopifyIntegration:
             logger.error(f"Error creating/getting product: {str(e)}")
             return None
     
-    def create_checkout(self, quote_data: Dict[str, Any], customer_info: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+    def create_shopify_transaction(self, quote_data: Dict[str, Any], customer_info: Optional[Dict[str, Any]] = None, transaction_type: str = "checkout") -> Optional[Dict[str, Any]]:
         """
-        Create a Shopify checkout for the quote
-        Returns checkout URL and information
+        Create a Shopify transaction (checkout or order) from a quote
+        
+        Args:
+            quote_data: Quote information including parts and pricing
+            customer_info: Customer and shipping information
+            transaction_type: "checkout" for customer-facing checkout, "order" for direct order
+        
+        Returns:
+            Dictionary with transaction information (checkout_url or order_id)
         """
         try:
             # Get or create product
@@ -108,6 +120,21 @@ class ShopifyIntegration:
                 logger.error("Failed to get product information")
                 return None
             
+            if transaction_type == "checkout":
+                return self._create_checkout(product_info, quote_data, customer_info)
+            elif transaction_type == "order":
+                return self._create_direct_order(product_info, quote_data, customer_info)
+            else:
+                logger.error(f"Invalid transaction type: {transaction_type}")
+                return None
+                
+        except Exception as e:
+            logger.error(f"Error creating {transaction_type}: {str(e)}")
+            return None
+    
+    def _create_checkout(self, product_info: Dict[str, Any], quote_data: Dict[str, Any], customer_info: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+        """Create a customer-facing checkout using Storefront API"""
+        try:
             # Create checkout using Storefront API
             checkout_data = {
                 "lineItems": [
@@ -198,16 +225,9 @@ class ShopifyIntegration:
             logger.error(f"Error creating checkout: {str(e)}")
             return None
     
-    def create_order_from_quote(self, quote_data: Dict[str, Any], customer_info: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """
-        Create a direct order in Shopify (alternative to checkout)
-        """
+    def _create_direct_order(self, product_info: Dict[str, Any], quote_data: Dict[str, Any], customer_info: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Create a direct order using Admin API"""
         try:
-            # Get or create product
-            product_info = self.create_or_get_product(quote_data)
-            if not product_info:
-                return None
-            
             # Create order
             order = shopify.Order()
             order.email = customer_info.get('email')
@@ -269,6 +289,19 @@ class ShopifyIntegration:
         except Exception as e:
             logger.error(f"Error creating order: {str(e)}")
             return None
+    
+    # Backward compatibility methods
+    def create_checkout(self, quote_data: Dict[str, Any], customer_info: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+        """
+        Create a Shopify checkout for the quote (backward compatibility)
+        """
+        return self.create_shopify_transaction(quote_data, customer_info, "checkout")
+    
+    def create_order_from_quote(self, quote_data: Dict[str, Any], customer_info: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """
+        Create a direct order in Shopify (backward compatibility)
+        """
+        return self.create_shopify_transaction(quote_data, customer_info, "order")
     
     def get_order_status(self, order_id: str) -> Optional[Dict[str, Any]]:
         """
