@@ -1,0 +1,20 @@
+{
+  "shopify": {
+    "shop_domain": "your-shop.myshopify.com",
+    "access_token": "shpat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "api_version": "2024-01"
+  },
+  "app": {
+    "debug": false,
+    "log_level": "INFO",
+    "host": "0.0.0.0",
+    "port": 8000
+  },
+  "database": {
+    "url": "sqlite:///./quotes.db"
+  },
+  "pricing": {
+    "default_currency": "USD",
+    "tax_rate": 0.08
+  }
+}

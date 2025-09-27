@@ -23,6 +23,10 @@ dist/
 .env.test.local
 .env.production.local
 
+# Configuration files (keep examples)
+backend/config.json
+!backend/config.example.json
+
 # IDE files
 .vscode/
 .idea/
