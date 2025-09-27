@@ -1,0 +1,17 @@
+# Pricing Analysis Report
+
+## Pricing Formula
+Total Price = Material Base + (Material Rate × Material Area×Thickness) + (Cut Count Rate × Number of Cuts) + Finish Base + (Surface Rate × Surface Area)
+
+## Material Analysis Summary
+**Aluminum_5052-H32**: Base=$7.98, Material=$1.8886/sq in, Cut=$0.2794/cut (R²=0.992)
+**Aluminum_6061-T6**: Base=$6.70, Material=$2.6719/sq in, Cut=$0.2635/cut (R²=0.981)
+**Aluminum_7075-T6**: Base=$7.61, Material=$2.9613/sq in, Cut=$0.2612/cut (R²=0.993)
+**Galvanized Steel_G90**: Base=$8.69, Material=$1.6205/sq in, Cut=$0.2935/cut (R²=1.000)
+**Stainless Steel_304-2B**: Base=$8.39, Material=$2.9908/sq in, Cut=$0.2856/cut (R²=0.999)
+**Steel_1008**: Base=$8.52, Material=$1.6656/sq in, Cut=$0.2908/cut (R²=1.000)
+**Steel_A36**: Base=$5.49, Material=$2.7397/sq in, Cut=$0.2706/cut (R²=0.963)
+
+## Finish Analysis Summary
+**Deburred**: Base=$1.42, Surface=$0.0059/sq in (R²=0.999)
+**Matte Black Powder Coat**: Base=$4.56, Surface=$0.0488/sq in (R²=0.999)

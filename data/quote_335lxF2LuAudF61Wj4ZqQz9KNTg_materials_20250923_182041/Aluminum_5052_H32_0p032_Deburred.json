@@ -1,0 +1,3811 @@
+{
+  "combination_info": {
+    "materialType": "Aluminum",
+    "materialGrade": "5052-H32",
+    "materialThickness": "0.032",
+    "finish": "Deburred",
+    "timestamp": "2025-09-23T18:20:45.476724"
+  },
+  "quote_details": [
+    {
+      "result": {
+        "data": {
+          "json": {
+            "id": "qte_335lxF2LuAudF61Wj4ZqQz9KNTg",
+            "createdAt": "2025-09-23T08:10:58.000Z",
+            "number": "25-09-1594",
+            "userId": null,
+            "orgId": null,
+            "guestId": "91522eca-6e8b-4c91-8d6d-11311c6b71c1",
+            "deleted": false,
+            "shareId": null,
+            "sharedFrom": null,
+            "prodSpeed": null,
+            "customFee": null,
+            "customNotes": null,
+            "customDueDate": null,
+            "zipCode": null,
+            "needsLiftGate": null,
+            "assemblies": [
+              {
+                "id": "assm_335lyjBdnIXTr8mDi8zTvD6OyYt",
+                "createdAt": "2025-09-23T08:11:09.000Z",
+                "quoteId": "qte_335lxF2LuAudF61Wj4ZqQz9KNTg",
+                "number": "25-09-672-461",
+                "deleted": false,
+                "name": "Custom parts.step",
+                "fileId": "file_335lyevLVnOvwOh4C5fyPuRnVMW",
+                "parts": [
+                  {
+                    "id": "part_335lzP77xQz5zcM2TgXmU7ec1xx",
+                    "assemblyId": "assm_335lyjBdnIXTr8mDi8zTvD6OyYt",
+                    "deleted": false,
+                    "customPrice": null,
+                    "customNotes": null,
+                    "createdAt": "2025-09-23T08:11:16.000Z",
+                    "number": "25-09-083-035",
+                    "name": "Part 9",
+                    "bodyId": "body_335lzTkQufUb7UbBcZvkRkpaNat",
+                    "quantity": 1,
+                    "materialType": "Aluminum",
+                    "materialGrade": "5052-H32",
+                    "materialThickness": "0.032",
+                    "finish": "Deburred",
+                    "holeOps": null,
+                    "bypassErrors": null,
+                    "body": {
+                      "id": "body_335lzTkQufUb7UbBcZvkRkpaNat",
+                      "createdAt": "2025-09-23T08:11:16.000Z",
+                      "fileId": "file_335lyevLVnOvwOh4C5fyPuRnVMW",
+                      "bodyIndex": 2,
+                      "thickness": "0.125",
+                      "cutLenIn": 23.56599998474121,
+                      "numCuts": 21,
+                      "matUseSqin": 6.564000129699707,
+                      "numBends": null,
+                      "surfAreaSqin": 14.119000434875488,
+                      "sheetAreaSqin": 5.586999893188477,
+                      "volumeIn3": 0.6980000138282776,
+                      "lengthIn": 3.4149999618530273,
+                      "widthIn": 1.9290000200271606,
+                      "heightIn": 0.125,
+                      "tubeWidthIn": null,
+                      "tubeHeightIn": null,
+                      "tubeLengthIn": null,
+                      "tubeCornerRadiusIn": null,
+                      "flatLengthIn": 3.4149999618530273,
+                      "flatWidthIn": 1.9290000200271606,
+                      "bendData": null,
+                      "holeData": [
+                        {
+                          "idx": "11",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            11
+                          ],
+                          "diameter": 0.5906,
+                          "location": [
+                            16.202,
+                            -6.412,
+                            -34.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "12",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            12
+                          ],
+                          "diameter": 0.5906,
+                          "location": [
+                            59.935,
+                            -6.412,
+                            -34.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "13",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            13
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            75.935,
+                            -6.412,
+                            -18.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "14",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            14
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            43.935,
+                            -6.412,
+                            -18.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "15",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            15
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            38.069,
+                            -6.412,
+                            -18.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "16",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            16
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            32.202,
+                            -6.412,
+                            -18.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "17",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            17
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            0.202,
+                            -6.412,
+                            -18.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "18",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            18
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            0.202,
+                            -6.412,
+                            -50.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "19",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            19
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            32.202,
+                            -6.412,
+                            -50.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "20",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            20
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            38.069,
+                            -6.412,
+                            -50.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "21",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            21
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            43.935,
+                            -6.412,
+                            -50.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "22",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            22
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            75.935,
+                            -6.412,
+                            -50.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "23",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            23
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            67.935,
+                            -6.412,
+                            -42.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "24",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            24
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            8.202,
+                            -6.412,
+                            -42.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "25",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            25
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            8.202,
+                            -6.412,
+                            -26.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "26",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            26
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            24.202,
+                            -6.412,
+                            -26.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "27",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            27
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            24.202,
+                            -6.412,
+                            -42.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "28",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            28
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            51.935,
+                            -6.412,
+                            -42.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "29",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            29
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            51.935,
+                            -6.412,
+                            -26.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "30",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            30
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            67.935,
+                            -6.412,
+                            -26.5
+                          ],
+                          "hasBackside": false
+                        }
+                      ],
+                      "orientation": [
+                        "x",
+                        "z",
+                        "y"
+                      ],
+                      "codes": [],
+                      "type": "sheet",
+                      "subType": "flat"
+                    }
+                  },
+                  {
+                    "id": "part_335lzTrYmR2EiPWiK59j1lxxuMP",
+                    "assemblyId": "assm_335lyjBdnIXTr8mDi8zTvD6OyYt",
+                    "deleted": false,
+                    "customPrice": null,
+                    "customNotes": null,
+                    "createdAt": "2025-09-23T08:11:16.000Z",
+                    "number": "25-09-719-699",
+                    "name": "Part 7",
+                    "bodyId": "body_335lzN1asmAI0Hyffvq0krHWPju",
+                    "quantity": 1,
+                    "materialType": "Aluminum",
+                    "materialGrade": "5052-H32",
+                    "materialThickness": "0.032",
+                    "finish": "Deburred",
+                    "holeOps": null,
+                    "bypassErrors": null,
+                    "body": {
+                      "id": "body_335lzN1asmAI0Hyffvq0krHWPju",
+                      "createdAt": "2025-09-23T08:11:16.000Z",
+                      "fileId": "file_335lyevLVnOvwOh4C5fyPuRnVMW",
+                      "bodyIndex": 1,
+                      "thickness": "0.125",
+                      "cutLenIn": 178.02999877929688,
+                      "numCuts": 40,
+                      "matUseSqin": 70.82599639892578,
+                      "numBends": null,
+                      "surfAreaSqin": 82.88300323486328,
+                      "sheetAreaSqin": 30.315000534057617,
+                      "volumeIn3": 3.7890000343322754,
+                      "lengthIn": 16.062999725341797,
+                      "widthIn": 4.408999919891357,
+                      "heightIn": 0.125,
+                      "tubeWidthIn": null,
+                      "tubeHeightIn": null,
+                      "tubeLengthIn": null,
+                      "tubeCornerRadiusIn": null,
+                      "flatLengthIn": 16.062999725341797,
+                      "flatWidthIn": 4.408999919891357,
+                      "bendData": null,
+                      "holeData": [
+                        {
+                          "idx": "23",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            23
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            196,
+                            -29.587,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "24",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            24
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -117.6,
+                            -29.587,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "25",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            25
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            65.333,
+                            -29.587,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "26",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            26
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            0,
+                            -29.587,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "27",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            27
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -65.333,
+                            -29.587,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "28",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            28
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -39.2,
+                            -29.587,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "29",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            29
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            117.6,
+                            -29.587,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "30",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            30
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            130.667,
+                            -29.587,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "31",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            31
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            196,
+                            -29.587,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "32",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            32
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            145,
+                            -29.587,
+                            -14
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "33",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            33
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -145,
+                            -29.587,
+                            -14
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "34",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            34
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -196,
+                            -29.587,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "35",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            35
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -196,
+                            -29.587,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "36",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            36
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            38.069,
+                            -29.587,
+                            -50.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "37",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            37
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            38.069,
+                            -29.587,
+                            -18.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "38",
+                          "axis": [
+                            0,
+                            1,
+                            0
+                          ],
+                          "faceIds": [
+                            38
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -130.667,
+                            -29.587,
+                            48
+                          ],
+                          "hasBackside": false
+                        }
+                      ],
+                      "orientation": [
+                        "x",
+                        "z",
+                        "y"
+                      ],
+                      "codes": [],
+                      "type": "sheet",
+                      "subType": "flat"
+                    }
+                  },
+                  {
+                    "id": "part_335lzQlfFG2HuqDzPUz9AxhFkha",
+                    "assemblyId": "assm_335lyjBdnIXTr8mDi8zTvD6OyYt",
+                    "deleted": false,
+                    "customPrice": null,
+                    "customNotes": null,
+                    "createdAt": "2025-09-23T08:11:16.000Z",
+                    "number": "25-09-951-310",
+                    "name": "Part 8",
+                    "bodyId": "body_335lzNxdLoAKX4pG5SwYsWmBHW4",
+                    "quantity": 1,
+                    "materialType": "Aluminum",
+                    "materialGrade": "5052-H32",
+                    "materialThickness": "0.032",
+                    "finish": "Deburred",
+                    "holeOps": null,
+                    "bypassErrors": null,
+                    "body": {
+                      "id": "body_335lzNxdLoAKX4pG5SwYsWmBHW4",
+                      "createdAt": "2025-09-23T08:11:16.000Z",
+                      "fileId": "file_335lyevLVnOvwOh4C5fyPuRnVMW",
+                      "bodyIndex": 0,
+                      "thickness": "0.125",
+                      "cutLenIn": 134.12899780273438,
+                      "numCuts": 161,
+                      "matUseSqin": 70.82599639892578,
+                      "numBends": null,
+                      "surfAreaSqin": 144.64500427246094,
+                      "sheetAreaSqin": 63.93899917602539,
+                      "volumeIn3": 7.992000102996826,
+                      "lengthIn": 16.062999725341797,
+                      "widthIn": 4.408999919891357,
+                      "heightIn": 0.125,
+                      "tubeWidthIn": null,
+                      "tubeHeightIn": null,
+                      "tubeLengthIn": null,
+                      "tubeCornerRadiusIn": null,
+                      "flatLengthIn": 16.062999725341797,
+                      "flatWidthIn": 4.408999919891357,
+                      "bendData": null,
+                      "holeData": [
+                        {
+                          "idx": "7",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            7
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            196,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "8",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            8
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -117.6,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "9",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            9
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            65.333,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "10",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            10
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            0,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "11",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            11
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -65.333,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "12",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            12
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -39.2,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "13",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            13
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            117.6,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "14",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            14
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            130.667,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "15",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            15
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            196,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "16",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            16
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            145,
+                            29.588,
+                            -14
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "17",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            17
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -145,
+                            29.588,
+                            -14
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "18",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            18
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -196,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "19",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            19
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -196,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "20",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            20
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            38.069,
+                            29.588,
+                            -50.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "21",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            21
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            38.069,
+                            29.588,
+                            -18.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "22",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            22
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -130.667,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "23",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            23
+                          ],
+                          "diameter": 1.4567,
+                          "location": [
+                            16.202,
+                            29.588,
+                            -34.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "24",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            24
+                          ],
+                          "diameter": 1.4567,
+                          "location": [
+                            59.935,
+                            29.588,
+                            -34.5
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "25",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            25
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            180,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "26",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            26
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -12,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "27",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            27
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -28,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "28",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            28
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -60,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "29",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            29
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -76,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "30",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            30
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -92,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "31",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            31
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -108,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "32",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            32
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -140,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "33",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            33
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -156,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "34",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            34
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -172,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "35",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            35
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -28,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "36",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            36
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -44,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "37",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            37
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            36,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "38",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            38
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            116,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "39",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            39
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            20,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "40",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            40
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            20,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "41",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            41
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            20,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "42",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            42
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            4,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "43",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            43
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            36,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "44",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            44
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            36,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "45",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            45
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            36,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "46",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            46
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            20,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "47",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            47
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -12,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "48",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            48
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -12,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "49",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            49
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -12,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "50",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            50
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -12,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "51",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            51
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -12,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "52",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            52
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -12,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "53",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            53
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            4,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "54",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            54
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            4,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "55",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            55
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            100,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "56",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            56
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            84,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "57",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            57
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            84,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "58",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            58
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            84,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "59",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            59
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            100,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "60",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            60
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            100,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "61",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            61
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            100,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "62",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            62
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            100,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "63",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            63
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            68,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "64",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            64
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            68,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "65",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            65
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            68,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "66",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            66
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            84,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "67",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            67
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            52,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "68",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            68
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            52,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "69",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            69
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            52,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "70",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            70
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            52,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "71",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            71
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            148,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "72",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            72
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            132,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "73",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            73
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            132,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "74",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            74
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            132,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "75",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            75
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            148,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "76",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            76
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            148,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "77",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            77
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            148,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "78",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            78
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            148,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "79",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            79
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            116,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "80",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            80
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            116,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "81",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            81
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            116,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "82",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            82
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            100,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "83",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            83
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            116,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "84",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            84
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            116,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "85",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            85
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            132,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "86",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            86
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            132,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "87",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            87
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            196,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "88",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            88
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            180,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "89",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            89
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            180,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "90",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            90
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            180,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "91",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            91
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            196,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "92",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            92
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            196,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "93",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            93
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            196,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "94",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            94
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            196,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "95",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            95
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            164,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "96",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            96
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            164,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "97",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            97
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            164,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "98",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            98
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            164,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "99",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            99
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            164,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "100",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            100
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            164,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "101",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            101
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            180,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "102",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            102
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            180,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "103",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            103
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -140,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "104",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            104
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -140,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "105",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            105
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -156,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "106",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            106
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -156,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "107",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            107
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -156,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "108",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            108
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -156,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "109",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            109
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -156,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "110",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            110
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -156,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "111",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            111
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -124,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "112",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            112
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -124,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "113",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            113
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -124,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "114",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            114
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -124,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "115",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            115
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -140,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "116",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            116
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -140,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "117",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            117
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -140,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "118",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            118
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -124,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "119",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            119
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -188,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "120",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            120
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -188,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "121",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            121
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -188,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "122",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            122
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            180,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "123",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            123
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            164,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "124",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            124
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            148,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "125",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            125
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            132,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "126",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            126
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            100,
+                            29.588,
+                            -48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "127",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            127
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -172,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "128",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            128
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -172,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "129",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            129
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -172,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "130",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            130
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -172,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "131",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            131
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -172,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "132",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            132
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -172,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "133",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            133
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -188,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "134",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            134
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -188,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "135",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            135
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -44,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "136",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            136
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -44,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "137",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            137
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -60,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "138",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            138
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -60,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "139",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            139
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -60,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "140",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            140
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -60,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "141",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            141
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -76,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "142",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            142
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -76,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "143",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            143
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -28,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "144",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            144
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -28,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "145",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            145
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -28,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "146",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            146
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -28,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "147",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            147
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -44,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "148",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            148
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -44,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "149",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            149
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -44,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "150",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            150
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -28,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "151",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            151
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -92,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "152",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            152
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -92,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "153",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            153
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -108,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "154",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            154
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -108,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "155",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            155
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -108,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "156",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            156
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -108,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "157",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            157
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -108,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "158",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            158
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -108,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "159",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            159
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -92,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "160",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            160
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -92,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "161",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            161
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -92,
+                            29.588,
+                            32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "162",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            162
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -92,
+                            29.588,
+                            48
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "163",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            163
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -76,
+                            29.588,
+                            -32
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "164",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            164
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -76,
+                            29.588,
+                            -16
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "165",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            165
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -76,
+                            29.588,
+                            0
+                          ],
+                          "hasBackside": false
+                        },
+                        {
+                          "idx": "166",
+                          "axis": [
+                            0,
+                            -1,
+                            0
+                          ],
+                          "faceIds": [
+                            166
+                          ],
+                          "diameter": 0.1693,
+                          "location": [
+                            -76,
+                            29.588,
+                            16
+                          ],
+                          "hasBackside": false
+                        }
+                      ],
+                      "orientation": [
+                        "x",
+                        "z",
+                        "y"
+                      ],
+                      "codes": [],
+                      "type": "sheet",
+                      "subType": "flat"
+                    }
+                  }
+                ],
+                "file": {
+                  "id": "file_335lyevLVnOvwOh4C5fyPuRnVMW",
+                  "createdAt": "2025-09-23T08:11:09.000Z",
+                  "parsedVersion": 2,
+                  "fileName": "Custom parts.step",
+                  "fileType": "",
+                  "status": "success"
+                }
+              }
+            ],
+            "pricing": {
+              "allConfigured": true,
+              "parts": [
+                {
+                  "id": "part_335lzP77xQz5zcM2TgXmU7ec1xx",
+                  "assemblyId": "assm_335lyjBdnIXTr8mDi8zTvD6OyYt",
+                  "total": {
+                    "pricePerPart": 1655
+                  },
+                  "stats": {
+                    "discount": 0
+                  }
+                },
+                {
+                  "id": "part_335lzTrYmR2EiPWiK59j1lxxuMP",
+                  "assemblyId": "assm_335lyjBdnIXTr8mDi8zTvD6OyYt",
+                  "total": {
+                    "pricePerPart": 2539
+                  },
+                  "stats": {
+                    "discount": "-0"
+                  }
+                },
+                {
+                  "id": "part_335lzQlfFG2HuqDzPUz9AxhFkha",
+                  "assemblyId": "assm_335lyjBdnIXTr8mDi8zTvD6OyYt",
+                  "total": {
+                    "pricePerPart": 6108
+                  },
+                  "stats": {
+                    "discount": 0
+                  }
+                }
+              ],
+              "total": {
+                "price": 10302
+              }
+            }
+          },
+          "meta": {
+            "values": {
+              "createdAt": [
+                "Date"
+              ],
+              "assemblies.0.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.0.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.0.body.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.1.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.1.body.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.2.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.2.body.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.file.createdAt": [
+                "Date"
+              ],
+              "pricing.parts.1.stats.discount": [
+                "number"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}

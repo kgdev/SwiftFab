@@ -1,0 +1,508 @@
+{
+  "combination_info": {
+    "materialType": "Aluminum",
+    "materialGrade": "5052-H32",
+    "materialThickness": "0.032",
+    "finish": "Matte Black Powder Coat",
+    "timestamp": "2025-09-23T18:27:05.165058"
+  },
+  "quote_details": [
+    {
+      "result": {
+        "data": {
+          "json": {
+            "id": "qte_333at6zprvFFBYez5eCTxVmFGYl",
+            "createdAt": "2025-09-22T13:40:20.000Z",
+            "number": "25-09-6765",
+            "userId": null,
+            "orgId": null,
+            "guestId": "91522eca-6e8b-4c91-8d6d-11311c6b71c1",
+            "deleted": false,
+            "shareId": null,
+            "sharedFrom": null,
+            "prodSpeed": null,
+            "customFee": null,
+            "customNotes": null,
+            "customDueDate": null,
+            "zipCode": null,
+            "needsLiftGate": null,
+            "assemblies": [
+              {
+                "id": "assm_335Itw4yehwgQEN5mCg7HrCLL3E",
+                "createdAt": "2025-09-23T04:12:05.000Z",
+                "quoteId": "qte_333at6zprvFFBYez5eCTxVmFGYl",
+                "number": "25-09-845-269",
+                "deleted": false,
+                "name": "Unnamed-Cube.step",
+                "fileId": "file_335Iu23uR0bZplzd5f5FRtIBrm1",
+                "parts": [
+                  {
+                    "id": "part_335IuS3Jt0XDMU7lmsQQyV84yP3",
+                    "assemblyId": "assm_335Itw4yehwgQEN5mCg7HrCLL3E",
+                    "deleted": false,
+                    "customPrice": null,
+                    "customNotes": null,
+                    "createdAt": "2025-09-23T04:12:09.000Z",
+                    "number": "25-09-225-627",
+                    "name": "Cube003",
+                    "bodyId": "body_335IuPwETcPP4tCCyP3pN8iIlLi",
+                    "quantity": 1,
+                    "materialType": "Aluminum",
+                    "materialGrade": "5052-H32",
+                    "materialThickness": "0.032",
+                    "finish": "Matte Black Powder Coat",
+                    "holeOps": null,
+                    "bypassErrors": null,
+                    "body": {
+                      "id": "body_335IuPwETcPP4tCCyP3pN8iIlLi",
+                      "createdAt": "2025-09-23T04:12:09.000Z",
+                      "fileId": "file_335Iu23uR0bZplzd5f5FRtIBrm1",
+                      "bodyIndex": 5,
+                      "thickness": "1",
+                      "cutLenIn": 320,
+                      "numCuts": 1,
+                      "matUseSqin": 1500,
+                      "numBends": null,
+                      "surfAreaSqin": 3320,
+                      "sheetAreaSqin": 1500,
+                      "volumeIn3": 1500,
+                      "lengthIn": 150,
+                      "widthIn": 10,
+                      "heightIn": 1,
+                      "tubeWidthIn": null,
+                      "tubeHeightIn": null,
+                      "tubeLengthIn": null,
+                      "tubeCornerRadiusIn": null,
+                      "flatLengthIn": 150,
+                      "flatWidthIn": 10,
+                      "bendData": null,
+                      "holeData": [],
+                      "orientation": [
+                        "x",
+                        "z",
+                        "y"
+                      ],
+                      "codes": [],
+                      "type": "sheet",
+                      "subType": "flat"
+                    }
+                  },
+                  {
+                    "id": "part_335IuW5eTNGSaU3VuBPdDCmcGtQ",
+                    "assemblyId": "assm_335Itw4yehwgQEN5mCg7HrCLL3E",
+                    "deleted": false,
+                    "customPrice": null,
+                    "customNotes": null,
+                    "createdAt": "2025-09-23T04:12:09.000Z",
+                    "number": "25-09-242-078",
+                    "name": "Cube",
+                    "bodyId": "body_335IuRAJnGGau2At4fQq1HDzQGm",
+                    "quantity": 1,
+                    "materialType": "Aluminum",
+                    "materialGrade": "5052-H32",
+                    "materialThickness": "0.032",
+                    "finish": "Matte Black Powder Coat",
+                    "holeOps": null,
+                    "bypassErrors": null,
+                    "body": {
+                      "id": "body_335IuRAJnGGau2At4fQq1HDzQGm",
+                      "createdAt": "2025-09-23T04:12:09.000Z",
+                      "fileId": "file_335Iu23uR0bZplzd5f5FRtIBrm1",
+                      "bodyIndex": 0,
+                      "thickness": "1",
+                      "cutLenIn": 40,
+                      "numCuts": 1,
+                      "matUseSqin": 100,
+                      "numBends": null,
+                      "surfAreaSqin": 240,
+                      "sheetAreaSqin": 100,
+                      "volumeIn3": 100,
+                      "lengthIn": 10,
+                      "widthIn": 10,
+                      "heightIn": 1,
+                      "tubeWidthIn": null,
+                      "tubeHeightIn": null,
+                      "tubeLengthIn": null,
+                      "tubeCornerRadiusIn": null,
+                      "flatLengthIn": 10,
+                      "flatWidthIn": 10,
+                      "bendData": null,
+                      "holeData": [],
+                      "orientation": [
+                        "x",
+                        "z",
+                        "y"
+                      ],
+                      "codes": [],
+                      "type": "sheet",
+                      "subType": "flat"
+                    }
+                  },
+                  {
+                    "id": "part_335IuS0nQV4GVsm5YmgtOHfC1Hs",
+                    "assemblyId": "assm_335Itw4yehwgQEN5mCg7HrCLL3E",
+                    "deleted": false,
+                    "customPrice": null,
+                    "customNotes": null,
+                    "createdAt": "2025-09-23T04:12:09.000Z",
+                    "number": "25-09-250-860",
+                    "name": "Cube005",
+                    "bodyId": "body_335IuX5XugmSGp2QaFCCyPe0EVA",
+                    "quantity": 1,
+                    "materialType": "Aluminum",
+                    "materialGrade": "5052-H32",
+                    "materialThickness": "0.032",
+                    "finish": "Matte Black Powder Coat",
+                    "holeOps": null,
+                    "bypassErrors": null,
+                    "body": {
+                      "id": "body_335IuX5XugmSGp2QaFCCyPe0EVA",
+                      "createdAt": "2025-09-23T04:12:09.000Z",
+                      "fileId": "file_335Iu23uR0bZplzd5f5FRtIBrm1",
+                      "bodyIndex": 3,
+                      "thickness": "1",
+                      "cutLenIn": 1020,
+                      "numCuts": 1,
+                      "matUseSqin": 5000,
+                      "numBends": null,
+                      "surfAreaSqin": 11020,
+                      "sheetAreaSqin": 5000,
+                      "volumeIn3": 5000,
+                      "lengthIn": 500,
+                      "widthIn": 10,
+                      "heightIn": 1,
+                      "tubeWidthIn": null,
+                      "tubeHeightIn": null,
+                      "tubeLengthIn": null,
+                      "tubeCornerRadiusIn": null,
+                      "flatLengthIn": 500,
+                      "flatWidthIn": 10,
+                      "bendData": null,
+                      "holeData": [],
+                      "orientation": [
+                        "x",
+                        "z",
+                        "y"
+                      ],
+                      "codes": [],
+                      "type": "sheet",
+                      "subType": "flat"
+                    }
+                  },
+                  {
+                    "id": "part_335IuRN5yY1CJ7WM41BpM7mnqt9",
+                    "assemblyId": "assm_335Itw4yehwgQEN5mCg7HrCLL3E",
+                    "deleted": false,
+                    "customPrice": null,
+                    "customNotes": null,
+                    "createdAt": "2025-09-23T04:12:09.000Z",
+                    "number": "25-09-292-390",
+                    "name": "Cube004",
+                    "bodyId": "body_335IuWBQ8ItMZvScaeJ3veKaSqS",
+                    "quantity": 1,
+                    "materialType": "Aluminum",
+                    "materialGrade": "5052-H32",
+                    "materialThickness": "0.032",
+                    "finish": "Matte Black Powder Coat",
+                    "holeOps": null,
+                    "bypassErrors": null,
+                    "body": {
+                      "id": "body_335IuWBQ8ItMZvScaeJ3veKaSqS",
+                      "createdAt": "2025-09-23T04:12:09.000Z",
+                      "fileId": "file_335Iu23uR0bZplzd5f5FRtIBrm1",
+                      "bodyIndex": 2,
+                      "thickness": "1",
+                      "cutLenIn": 420,
+                      "numCuts": 1,
+                      "matUseSqin": 2000,
+                      "numBends": null,
+                      "surfAreaSqin": 4420,
+                      "sheetAreaSqin": 2000,
+                      "volumeIn3": 2000,
+                      "lengthIn": 200,
+                      "widthIn": 10,
+                      "heightIn": 1,
+                      "tubeWidthIn": null,
+                      "tubeHeightIn": null,
+                      "tubeLengthIn": null,
+                      "tubeCornerRadiusIn": null,
+                      "flatLengthIn": 200,
+                      "flatWidthIn": 10,
+                      "bendData": null,
+                      "holeData": [],
+                      "orientation": [
+                        "x",
+                        "z",
+                        "y"
+                      ],
+                      "codes": [],
+                      "type": "sheet",
+                      "subType": "flat"
+                    }
+                  },
+                  {
+                    "id": "part_335IuUTxABXuZdELzMzpdOKMZzj",
+                    "assemblyId": "assm_335Itw4yehwgQEN5mCg7HrCLL3E",
+                    "deleted": false,
+                    "customPrice": null,
+                    "customNotes": null,
+                    "createdAt": "2025-09-23T04:12:09.000Z",
+                    "number": "25-09-716-373",
+                    "name": "Cube002",
+                    "bodyId": "body_335IuT43V0nk6XAhurTQwa1WXN8",
+                    "quantity": 1,
+                    "materialType": "Aluminum",
+                    "materialGrade": "5052-H32",
+                    "materialThickness": "0.032",
+                    "finish": "Matte Black Powder Coat",
+                    "holeOps": null,
+                    "bypassErrors": null,
+                    "body": {
+                      "id": "body_335IuT43V0nk6XAhurTQwa1WXN8",
+                      "createdAt": "2025-09-23T04:12:09.000Z",
+                      "fileId": "file_335Iu23uR0bZplzd5f5FRtIBrm1",
+                      "bodyIndex": 4,
+                      "thickness": "1",
+                      "cutLenIn": 220,
+                      "numCuts": 1,
+                      "matUseSqin": 1000,
+                      "numBends": null,
+                      "surfAreaSqin": 2220,
+                      "sheetAreaSqin": 1000,
+                      "volumeIn3": 1000,
+                      "lengthIn": 100,
+                      "widthIn": 10,
+                      "heightIn": 1,
+                      "tubeWidthIn": null,
+                      "tubeHeightIn": null,
+                      "tubeLengthIn": null,
+                      "tubeCornerRadiusIn": null,
+                      "flatLengthIn": 100,
+                      "flatWidthIn": 10,
+                      "bendData": null,
+                      "holeData": [],
+                      "orientation": [
+                        "x",
+                        "z",
+                        "y"
+                      ],
+                      "codes": [],
+                      "type": "sheet",
+                      "subType": "flat"
+                    }
+                  },
+                  {
+                    "id": "part_335IuX8NvqeOVWQv5b11z1iz8WX",
+                    "assemblyId": "assm_335Itw4yehwgQEN5mCg7HrCLL3E",
+                    "deleted": false,
+                    "customPrice": null,
+                    "customNotes": null,
+                    "createdAt": "2025-09-23T04:12:09.000Z",
+                    "number": "25-09-912-645",
+                    "name": "Cube001",
+                    "bodyId": "body_335IuREXJhZ5VvFa7JFKpBZqGlT",
+                    "quantity": 1,
+                    "materialType": "Aluminum",
+                    "materialGrade": "5052-H32",
+                    "materialThickness": "0.032",
+                    "finish": "Matte Black Powder Coat",
+                    "holeOps": null,
+                    "bypassErrors": null,
+                    "body": {
+                      "id": "body_335IuREXJhZ5VvFa7JFKpBZqGlT",
+                      "createdAt": "2025-09-23T04:12:09.000Z",
+                      "fileId": "file_335Iu23uR0bZplzd5f5FRtIBrm1",
+                      "bodyIndex": 1,
+                      "thickness": "1",
+                      "cutLenIn": 120,
+                      "numCuts": 1,
+                      "matUseSqin": 500,
+                      "numBends": null,
+                      "surfAreaSqin": 1120,
+                      "sheetAreaSqin": 500,
+                      "volumeIn3": 500,
+                      "lengthIn": 50,
+                      "widthIn": 10,
+                      "heightIn": 1,
+                      "tubeWidthIn": null,
+                      "tubeHeightIn": null,
+                      "tubeLengthIn": null,
+                      "tubeCornerRadiusIn": null,
+                      "flatLengthIn": 50,
+                      "flatWidthIn": 10,
+                      "bendData": null,
+                      "holeData": [],
+                      "orientation": [
+                        "x",
+                        "z",
+                        "y"
+                      ],
+                      "codes": [],
+                      "type": "sheet",
+                      "subType": "flat"
+                    }
+                  }
+                ],
+                "file": {
+                  "id": "file_335Iu23uR0bZplzd5f5FRtIBrm1",
+                  "createdAt": "2025-09-23T04:12:05.000Z",
+                  "parsedVersion": 2,
+                  "fileName": "Unnamed-Cube.step",
+                  "fileType": "",
+                  "status": "success"
+                }
+              },
+              {
+                "id": "assm_335AOh1s5iksIVmMmxLBZ51MN90",
+                "createdAt": "2025-09-23T03:02:09.000Z",
+                "quoteId": "qte_333at6zprvFFBYez5eCTxVmFGYl",
+                "number": "25-09-078-833",
+                "deleted": false,
+                "name": "Unnamed-Cube.step",
+                "fileId": "file_335AOgs9IBRZS0vcakd7qcrU0ry",
+                "parts": [],
+                "file": {
+                  "id": "file_335AOgs9IBRZS0vcakd7qcrU0ry",
+                  "createdAt": "2025-09-23T03:02:09.000Z",
+                  "parsedVersion": 2,
+                  "fileName": "Unnamed-Cube.step",
+                  "fileType": "",
+                  "status": "success"
+                }
+              }
+            ],
+            "pricing": {
+              "allConfigured": true,
+              "parts": [
+                {
+                  "id": "part_335IuS3Jt0XDMU7lmsQQyV84yP3",
+                  "assemblyId": "assm_335Itw4yehwgQEN5mCg7HrCLL3E",
+                  "total": {
+                    "pricePerPart": 21264
+                  },
+                  "stats": {
+                    "discount": 0
+                  }
+                },
+                {
+                  "id": "part_335IuW5eTNGSaU3VuBPdDCmcGtQ",
+                  "assemblyId": "assm_335Itw4yehwgQEN5mCg7HrCLL3E",
+                  "total": {
+                    "pricePerPart": 2821
+                  },
+                  "stats": {
+                    "discount": 0
+                  }
+                },
+                {
+                  "id": "part_335IuS0nQV4GVsm5YmgtOHfC1Hs",
+                  "assemblyId": "assm_335Itw4yehwgQEN5mCg7HrCLL3E",
+                  "total": {
+                    "pricePerPart": 66197
+                  },
+                  "stats": {
+                    "discount": "-0"
+                  }
+                },
+                {
+                  "id": "part_335IuRN5yY1CJ7WM41BpM7mnqt9",
+                  "assemblyId": "assm_335Itw4yehwgQEN5mCg7HrCLL3E",
+                  "total": {
+                    "pricePerPart": 27753
+                  },
+                  "stats": {
+                    "discount": 0
+                  }
+                },
+                {
+                  "id": "part_335IuUTxABXuZdELzMzpdOKMZzj",
+                  "assemblyId": "assm_335Itw4yehwgQEN5mCg7HrCLL3E",
+                  "total": {
+                    "pricePerPart": 14717
+                  },
+                  "stats": {
+                    "discount": 0
+                  }
+                },
+                {
+                  "id": "part_335IuX8NvqeOVWQv5b11z1iz8WX",
+                  "assemblyId": "assm_335Itw4yehwgQEN5mCg7HrCLL3E",
+                  "total": {
+                    "pricePerPart": 8112
+                  },
+                  "stats": {
+                    "discount": "-0"
+                  }
+                }
+              ],
+              "total": {
+                "price": 140864
+              }
+            }
+          },
+          "meta": {
+            "values": {
+              "createdAt": [
+                "Date"
+              ],
+              "assemblies.0.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.0.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.0.body.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.1.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.1.body.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.2.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.2.body.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.3.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.3.body.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.4.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.4.body.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.5.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.parts.5.body.createdAt": [
+                "Date"
+              ],
+              "assemblies.0.file.createdAt": [
+                "Date"
+              ],
+              "assemblies.1.createdAt": [
+                "Date"
+              ],
+              "assemblies.1.file.createdAt": [
+                "Date"
+              ],
+              "pricing.parts.2.stats.discount": [
+                "number"
+              ],
+              "pricing.parts.5.stats.discount": [
+                "number"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}
