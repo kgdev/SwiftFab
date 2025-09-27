@@ -310,6 +310,12 @@ The integration requires these configuration values:
 }
 ```
 
+**Getting Access Tokens:**
+1. Create an app in [Shopify Partners Dev Dashboard](https://partners.shopify.com)
+2. Configure API scopes for your app
+3. Install the app to your development store
+4. Copy tokens from "API credentials" tab
+
 **Environment Variables (fallback):**
 - `SHOPIFY_SHOP_DOMAIN`
 - `SHOPIFY_ACCESS_TOKEN`

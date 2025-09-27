@@ -6,16 +6,18 @@
 - Your Shopify store URL: `https://your-store-name.myshopify.com`
 - Your shop domain: `your-store-name.myshopify.com`
 
-### 2. Create Private App
-1. Go to: `https://your-store-name.myshopify.com/admin/apps`
-2. Click "App and sales channel settings"
-3. Click "Develop apps" → "Create an app"
-4. Name: "SwiftFab Quote System"
-5. Click "Configure Admin API scopes"
-6. Enable: `read_products`, `write_products`, `read_orders`, `write_orders`, `read_checkouts`, `write_checkouts`, `read_customers`, `write_customers`
-7. Click "Install app"
-8. Click "API credentials" tab
-9. Copy the "Admin API access token" (starts with `shpat_`)
+### 2. Create App in Dev Dashboard
+1. Go to: [partners.shopify.com](https://partners.shopify.com)
+2. Sign in or create Partner account (free)
+3. Click "Apps" → "Create app"
+4. Choose "Custom app"
+5. Name: "SwiftFab Quote System"
+6. Select your development store
+7. Go to "API credentials" tab
+8. Enable scopes: `read_products`, `write_products`, `read_orders`, `write_orders`, `read_checkouts`, `write_checkouts`, `read_customers`, `write_customers`
+9. Install app to your store
+10. Copy "Admin API access token" (starts with `shpat_`)
+11. Copy "Storefront API access token" (no prefix)
 
 ### 3. Update Configuration
 ```bash
@@ -45,8 +47,8 @@ python3 test_shopify_config.py
 | Value | Where to Find | Example |
 |-------|---------------|---------|
 | `shop_domain` | Your Shopify store URL | `my-store.myshopify.com` |
-| `access_token` | Private app → API credentials | `shpat_1234567890abcdef...` |
-| `storefront_access_token` | Private app → API credentials | `1234567890abcdef...` |
+| `access_token` | Dev Dashboard → API credentials | `shpat_1234567890abcdef...` |
+| `storefront_access_token` | Dev Dashboard → API credentials | `1234567890abcdef...` |
 | `api_version` | Use latest stable | `2025-07` |
 
 ## 🛠️ Troubleshooting
