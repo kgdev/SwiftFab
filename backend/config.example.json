@@ -2,7 +2,7 @@
   "shopify": {
     "shop_domain": "your-shop.myshopify.com",
     "access_token": "shpat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-    "api_version": "2024-01"
+    "api_version": "2025-07"
   },
   "app": {
     "debug": false,

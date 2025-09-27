@@ -79,7 +79,7 @@ class Config:
         return {
             'shop_domain': self.get('shop_domain', 'your-shop.myshopify.com', 'shopify'),
             'access_token': self.get('access_token', 'your-access-token', 'shopify'),
-            'api_version': self.get('api_version', '2024-01', 'shopify')
+            'api_version': self.get('api_version', '2025-07', 'shopify')
         }
     
     def get_app_config(self) -> Dict[str, Any]:
