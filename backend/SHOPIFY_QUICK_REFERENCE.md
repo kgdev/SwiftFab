@@ -7,7 +7,7 @@
 - Your shop domain: `your-store-name.myshopify.com`
 
 ### 2. Create App in Dev Dashboard
-1. Go to: [partners.shopify.com](https://partners.shopify.com)
+1. Go to: [dev.shopify.com](https://dev.shopify.com)
 2. Sign in or create Partner account (free)
 3. Click "Apps" → "Create app"
 4. Choose "Custom app"
