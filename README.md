@@ -1,156 +1,219 @@
 # SwiftFab Quote System
 
-A full-stack web application for parsing STEP files and generating manufacturing quotes with material and finish options.
+A full-stack web application for parsing STEP files and generating manufacturing quotes with material configuration and Shopify checkout integration.
 
 ## Features
 
 - **STEP File Upload**: Upload and parse STEP/STP files to extract geometric data
 - **Material Configuration**: Configure material type, grade, thickness, and finish options
-- **Real-time Pricing**: Calculate quotes based on material properties and dimensions
-- **Quote Management**: View and manage multiple quotes
-- **Responsive UI**: Modern, mobile-friendly interface built with Nuxt.js and Tailwind CSS
+- **Real-time Pricing**: Calculate quotes with live price updates and animations
+- **Quote Management**: View and manage multiple quotes with session-based authentication
+- **Shopify Integration**: Seamless checkout flow using Shopify's Admin API
+- **File Download**: Download original uploaded files
+- **Responsive UI**: Modern, mobile-friendly interface built with React and Tailwind CSS
 
 ## Tech Stack
 
 ### Backend
 - **FastAPI**: Python web framework for building APIs
-- **uv**: Fast Python package manager and virtual environment tool
-- **SQLAlchemy**: Database ORM
-- **SQLite/PostgreSQL**: Database (SQLite for development, PostgreSQL for production)
-- **FreeCAD**: CAD library for STEP file parsing (with fallback mock parser)
+- **SQLAlchemy**: Database ORM with SQLite
+- **Shopify Python API**: Integration with Shopify's Admin API
+- **File Storage**: Permanent file storage for uploaded STEP files
 
 ### Frontend
-- **Nuxt.js 3**: Vue.js framework with SSR capabilities
+- **React 19**: Modern React with TypeScript
+- **React Router**: Client-side routing
 - **Tailwind CSS**: Utility-first CSS framework
-- **Headless UI**: Accessible UI components
-- **Heroicons**: Beautiful SVG icons
+- **Custom Components**: Modular, reusable UI components
 
 ### Deployment
 - **Vercel**: Platform for deploying both frontend and backend
+- **GitHub**: Source code repository
 
 ## Project Structure
 
 ```
-swiftfab-quote-system/
+SwiftFab/
 ├── backend/
 │   ├── main.py              # FastAPI application
-│   ├── step_parser.py       # STEP file parser
-│   └── requirements.txt     # Python dependencies
+│   ├── shopify_integration.py # Shopify API integration
+│   ├── config.py            # Configuration management
+│   ├── config.json          # Configuration file (not tracked)
+│   ├── config.example.json  # Configuration template
+│   ├── requirements.txt     # Python dependencies
+│   ├── uploads/             # Uploaded STEP files
+│   └── quotes.db            # SQLite database
 ├── frontend/
-│   ├── pages/
-│   │   └── index.vue        # Main application page
-│   ├── assets/
-│   │   └── css/
-│   │       └── main.css     # Global styles
-│   ├── nuxt.config.ts       # Nuxt configuration
+│   ├── src/
+│   │   ├── pages/           # React pages
+│   │   │   ├── Home.tsx     # Main upload page
+│   │   │   ├── Quote.tsx    # Quote details page
+│   │   │   └── NotFound.tsx # 404 page
+│   │   ├── components/      # React components
+│   │   │   ├── ui/          # Reusable UI components
+│   │   │   └── quote/       # Quote-specific components
+│   │   ├── config/          # API configuration
+│   │   ├── types/           # TypeScript type definitions
+│   │   └── hooks/           # Custom React hooks
 │   ├── package.json         # Node.js dependencies
 │   └── vercel.json          # Vercel configuration
 ├── vercel.json              # Root Vercel configuration
-├── package.json             # Root package.json for scripts
 └── README.md               # This file
 ```
 
 ## API Endpoints
 
-### 1. Create Quote
-- **POST** `/api/createQuote`
-- **Body**: Multipart form data with STEP file
-- **Response**: Quote ID and basic information
+### Quote Management
+- **POST** `/api/createQuote` - Upload STEP file and create quote
+- **GET** `/api/quoteDetails/{id}` - Get quote details with parts
+- **GET** `/api/quotes` - List all quotes (session-based)
+- **PUT** `/api/updatePart/{id}` - Update part configuration
 
-### 2. Update Parts
-- **PUT** `/api/updateParts/{quote_id}`
-- **Body**: JSON with material configuration
-- **Response**: Updated quote with new pricing
+### File Management
+- **GET** `/api/downloadFile/{id}` - Download original STEP file
+- **GET** `/api/materials` - Get available materials and finishes
 
-### 3. Get Quote Details
-- **GET** `/api/quoteDetails/{quote_id}`
-- **Response**: Complete quote information including parts and pricing
-
-### 4. List Quotes
-- **GET** `/api/quotes`
-- **Response**: List of all quotes
+### Checkout
+- **POST** `/api/checkout/{id}` - Create Shopify checkout session
 
 ## Development Setup
 
 ### Prerequisites
-- Node.js 18+ 
-- uv (fast Python package manager) - [Install here](https://docs.astral.sh/uv/getting-started/installation/)
-- Python 3.8+ (or let uv install it: `uv python install`)
+- Node.js 18+
+- Python 3.8+
 - npm or yarn
 
 ### Backend Setup
 ```bash
 cd backend
-uv venv
-uv pip install -r requirements.txt
-source .venv/bin/activate && python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
+pip install -r requirements.txt
+cp config.example.json config.json
+# Edit config.json with your settings
+python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Frontend Setup
 ```bash
 cd frontend
 npm install
-npm run dev
+npm start
 ```
 
-### Full Development
+### Configuration
+
+#### Backend Configuration
+Create `backend/config.json` from `config.example.json`:
+
+```json
+{
+  "shopify": {
+    "shop_domain": "your-shop.myshopify.com",
+    "access_token": "shpat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "api_version": "2024-01"
+  },
+  "app": {
+    "debug": false,
+    "host": "0.0.0.0",
+    "port": 8000
+  },
+  "security": {
+    "admin_key": "your-admin-key-here"
+  }
+}
+```
+
+#### Frontend Configuration
+Create `frontend/.env`:
+
 ```bash
-# From root directory
-npm install
-npm run dev
+REACT_APP_API_BASE_URL=http://localhost:8000
 ```
 
-## Deployment on Vercel
+## Shopify Integration
 
-### 1. Environment Variables
-Set the following environment variables in Vercel:
-- `DATABASE_URL`: PostgreSQL connection string for production
+### Setup
+1. Create a Shopify private app
+2. Get Admin API access token
+3. Configure required scopes:
+   - `read_products`, `write_products`
+   - `read_orders`, `write_orders`
+   - `read_customers`, `write_customers`
+   - `read_inventory`, `write_inventory`
 
-### 2. Deploy
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
-```
-
-### 3. Configuration
-The `vercel.json` file configures:
-- Backend API routes (`/api/*`) to Python FastAPI
-- Frontend routes to Nuxt.js static build
-- Build commands and output directories
+### Features
+- Automatic product creation for each quote
+- Individual products for each part
+- Cart-based checkout flow
+- File download links in product descriptions
 
 ## Usage
 
-1. **Upload STEP File**: Select a STEP or STP file and click "Upload & Create Quote"
+1. **Upload STEP File**: Drag & drop or select a STEP/STP file
 2. **Configure Materials**: Set material type, grade, thickness, and finish
-3. **Update Quote**: Click "Update Quote" to recalculate pricing
-4. **View Details**: See part dimensions, hole count, and pricing information
-5. **Manage Quotes**: View all quotes and switch between them
+3. **View Quote**: See real-time price updates and part details
+4. **Download File**: Access original uploaded files
+5. **Checkout**: Proceed to Shopify checkout for order processing
 
-## STEP File Support
+## Key Features
 
-The system supports:
-- **File Formats**: .step, .stp
-- **Geometric Analysis**: Volume, surface area, dimensions
-- **Hole Detection**: Automatic detection of holes and cutouts
-- **Material Calculation**: Cut length, material usage, bend data
+### File Upload
+- Supports .step and .stp files up to 25MB
+- Drag & drop interface with validation
+- Automatic quote creation
 
-## Pricing Calculation
+### Quote Management
+- Real-time material configuration
+- Live price updates with animations
+- Parts breakdown with dimensions
+- Quantity management
 
-Pricing is calculated based on:
-- **Material Type**: Different multipliers for steel, aluminum, stainless steel
-- **Finish Options**: Additional costs for powder coating, anodizing, etc.
-- **Dimensions**: Volume, surface area, and cut length
-- **Complexity**: Number of cuts, holes, and bends
+### UI Components
+- Modular component architecture
+- Reusable UI components (Button, Card, FileUpload, etc.)
+- Responsive design with Tailwind CSS
+- Loading states and error handling
 
-## Limitations
+## Deployment
 
-- **FreeCAD Dependency**: Requires FreeCAD for full STEP parsing (fallback mock parser available)
-- **File Size**: Limited to 10MB uploads
-- **Material Database**: Limited material options (can be expanded)
-- **Pricing**: Simplified pricing model (can be enhanced with real pricing APIs)
+### Vercel Deployment
+1. Connect GitHub repository to Vercel
+2. Set environment variables:
+   - `REACT_APP_API_BASE_URL` - Your backend API URL
+   - `SHOPIFY_SHOP_DOMAIN` - Your Shopify domain
+   - `SHOPIFY_ACCESS_TOKEN` - Your Shopify access token
+   - `SECURITY_ADMIN_KEY` - Admin key for file downloads
+
+### Environment Variables
+- **Backend**: Configure via `config.json` or environment variables
+- **Frontend**: Set `REACT_APP_API_BASE_URL` for API endpoint
+
+## Architecture
+
+### Frontend Architecture
+- **Component-based**: Modular React components
+- **Type-safe**: Full TypeScript implementation
+- **State Management**: React hooks for local state
+- **API Integration**: Centralized API configuration
+
+### Backend Architecture
+- **RESTful API**: FastAPI with automatic documentation
+- **Database**: SQLAlchemy ORM with SQLite
+- **File Storage**: Permanent file storage system
+- **Session Management**: Session-based authentication
+
+## Security
+
+- Session-based authentication for quote access
+- Admin key for file downloads
+- Environment variable configuration
+- No sensitive data in version control
+
+## Browser Support
+
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
 
 ## Contributing
 
@@ -167,3 +230,7 @@ This project is licensed under the MIT License.
 ## Support
 
 For support and questions, please open an issue in the repository.
+
+## Repository
+
+GitHub: https://github.com/kgdev/SwiftFab
