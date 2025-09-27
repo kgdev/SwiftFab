@@ -98,13 +98,6 @@ class Config:
             'url': self.get('url', 'sqlite:///./quotes.db', 'database')
         }
     
-    def get_pricing_config(self) -> Dict[str, Any]:
-        """Get pricing configuration"""
-        return {
-            'default_currency': self.get('default_currency', 'USD', 'pricing'),
-            'tax_rate': self.get('tax_rate', 0.08, 'pricing')
-        }
-    
     def get_security_config(self) -> Dict[str, Any]:
         """Get security configuration"""
         return {
