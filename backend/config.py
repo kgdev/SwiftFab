@@ -79,6 +79,7 @@ class Config:
         return {
             'shop_domain': self.get('shop_domain', 'your-shop.myshopify.com', 'shopify'),
             'access_token': self.get('access_token', 'your-access-token', 'shopify'),
+            'storefront_access_token': self.get('storefront_access_token', 'your-storefront-token', 'shopify'),
             'api_version': self.get('api_version', '2025-07', 'shopify')
         }
     

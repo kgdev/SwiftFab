@@ -29,6 +29,7 @@ Update these values:
   "shopify": {
     "shop_domain": "your-store-name.myshopify.com",
     "access_token": "shpat_your_token_here",
+    "storefront_access_token": "your_storefront_token_here",
     "api_version": "2025-07"
   }
 }
@@ -45,6 +46,7 @@ python3 test_shopify_config.py
 |-------|---------------|---------|
 | `shop_domain` | Your Shopify store URL | `my-store.myshopify.com` |
 | `access_token` | Private app → API credentials | `shpat_1234567890abcdef...` |
+| `storefront_access_token` | Private app → API credentials | `1234567890abcdef...` |
 | `api_version` | Use latest stable | `2025-07` |
 
 ## 🛠️ Troubleshooting

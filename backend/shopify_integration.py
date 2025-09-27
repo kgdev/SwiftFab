@@ -24,6 +24,7 @@ class ShopifyIntegration:
         
         self.shop_domain = shopify_config['shop_domain']
         self.access_token = shopify_config['access_token']
+        self.storefront_access_token = shopify_config['storefront_access_token']
         self.api_version = shopify_config['api_version']
         
         # Configure Shopify session
@@ -153,7 +154,7 @@ class ShopifyIntegration:
             storefront_url = f"https://{self.shop_domain}/api/{self.api_version}/graphql.json"
             headers = {
                 'Content-Type': 'application/json',
-                'X-Shopify-Storefront-Access-Token': os.getenv('SHOPIFY_STOREFRONT_ACCESS_TOKEN', '')
+                'X-Shopify-Storefront-Access-Token': self.storefront_access_token
             }
             
             mutation = """
@@ -226,64 +227,78 @@ class ShopifyIntegration:
             return None
     
     def _create_direct_order(self, product_info: Dict[str, Any], quote_data: Dict[str, Any], customer_info: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """Create a direct order using Admin API"""
+        """Create a direct order using Storefront API (checkout completion)"""
         try:
-            # Create order
-            order = shopify.Order()
-            order.email = customer_info.get('email')
-            order.financial_status = 'pending'
-            order.fulfillment_status = 'unfulfilled'
-            order.send_receipt = True
-            order.send_fulfillment_receipt = True
+            # First create a checkout
+            checkout_result = self._create_checkout(product_info, quote_data, customer_info)
+            if not checkout_result:
+                logger.error("Failed to create checkout for order")
+                return None
             
-            # Set customer information
-            if customer_info.get('first_name') or customer_info.get('last_name'):
-                order.customer = shopify.Customer()
-                order.customer.first_name = customer_info.get('first_name', '')
-                order.customer.last_name = customer_info.get('last_name', '')
-                order.customer.email = customer_info.get('email', '')
+            # Complete the checkout to create an order
+            checkout_id = checkout_result['checkout_id']
             
-            # Set shipping address
-            if customer_info.get('shipping_address'):
-                shipping_address = shopify.Address()
-                addr = customer_info['shipping_address']
-                shipping_address.first_name = addr.get('first_name', '')
-                shipping_address.last_name = addr.get('last_name', '')
-                shipping_address.address1 = addr.get('address1', '')
-                shipping_address.address2 = addr.get('address2', '')
-                shipping_address.city = addr.get('city', '')
-                shipping_address.province = addr.get('province', '')
-                shipping_address.country = addr.get('country', 'US')
-                shipping_address.zip = addr.get('zip', '')
-                shipping_address.phone = addr.get('phone', '')
-                order.shipping_address = shipping_address
-                order.billing_address = shipping_address
+            # Use Storefront API to complete checkout
+            storefront_url = f"https://{self.shop_domain}/api/{self.api_version}/graphql.json"
+            headers = {
+                'Content-Type': 'application/json',
+                'X-Shopify-Storefront-Access-Token': self.storefront_access_token
+            }
             
-            # Add line items
-            line_item = shopify.LineItem()
-            line_item.variant_id = product_info['variant_id']
-            line_item.quantity = 1
-            line_item.price = product_info['price']
-            line_item.title = product_info['product_title']
-            line_item.sku = f"SWIFT-{quote_data.get('id')}"
-            
-            order.line_items = [line_item]
-            
-            # Add note
-            order.note = f"Quote ID: {quote_data.get('id')}\nFile: {quote_data.get('file_name')}\nCustom Fabrication Order"
-            
-            # Save order
-            if order.save():
-                logger.info(f"Created order: {order.id}")
-                return {
-                    'order_id': order.id,
-                    'order_number': order.order_number,
-                    'total_price': float(order.total_price),
-                    'currency': order.currency,
-                    'status': order.financial_status
+            # Complete checkout mutation
+            mutation = """
+            mutation checkoutComplete($checkoutId: ID!) {
+                checkoutComplete(checkoutId: $checkoutId) {
+                    checkout {
+                        id
+                        order {
+                            id
+                            orderNumber
+                            totalPrice {
+                                amount
+                                currencyCode
+                            }
+                            financialStatus
+                            fulfillmentStatus
+                        }
+                    }
+                    checkoutUserErrors {
+                        field
+                        message
+                    }
                 }
+            }
+            """
+            
+            import requests
+            response = requests.post(
+                storefront_url,
+                headers=headers,
+                json={
+                    "query": mutation,
+                    "variables": {"checkoutId": checkout_id}
+                }
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                if 'data' in result and result['data']['checkoutComplete']['order']:
+                    order = result['data']['checkoutComplete']['order']
+                    logger.info(f"Created order from checkout: {order['id']}")
+                    return {
+                        'order_id': order['id'],
+                        'order_number': order['orderNumber'],
+                        'total_price': order['totalPrice']['amount'],
+                        'currency': order['totalPrice']['currencyCode'],
+                        'status': order['financialStatus'],
+                        'fulfillment_status': order['fulfillmentStatus']
+                    }
+                else:
+                    errors = result['data']['checkoutComplete']['checkoutUserErrors']
+                    logger.error(f"Order creation errors: {errors}")
+                    return None
             else:
-                logger.error(f"Failed to create order: {order.errors}")
+                logger.error(f"Failed to complete checkout: {response.status_code} - {response.text}")
                 return None
                 
         except Exception as e:

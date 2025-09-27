@@ -49,7 +49,7 @@ Creates a customer-facing checkout using Shopify's Storefront API.
 ```
 
 #### Order (`transaction_type="order"`)
-Creates a direct order using Shopify's Admin API.
+Creates a direct order using Shopify's Storefront API (checkout completion).
 
 **Use Cases:**
 - Internal order processing
@@ -304,6 +304,7 @@ The integration requires these configuration values:
   "shopify": {
     "shop_domain": "your-shop.myshopify.com",
     "access_token": "shpat_...",
+    "storefront_access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "api_version": "2025-07"
   }
 }
@@ -312,8 +313,8 @@ The integration requires these configuration values:
 **Environment Variables (fallback):**
 - `SHOPIFY_SHOP_DOMAIN`
 - `SHOPIFY_ACCESS_TOKEN`
+- `SHOPIFY_STOREFRONT_ACCESS_TOKEN`
 - `SHOPIFY_API_VERSION`
-- `SHOPIFY_STOREFRONT_ACCESS_TOKEN` (for checkouts)
 
 ## Migration Guide
 
