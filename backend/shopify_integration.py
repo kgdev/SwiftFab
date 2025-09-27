@@ -35,6 +35,96 @@ class ShopifyIntegration:
         
         logger.info(f"Shopify integration initialized for shop: {self.shop_domain}")
     
+    def check_configuration(self) -> Dict[str, Any]:
+        """
+        Check if the configuration is properly set up
+        Returns a dictionary with configuration status
+        """
+        status = {
+            'shop_domain': bool(self.shop_domain and not self.shop_domain.startswith('your-')),
+            'access_token': bool(self.access_token and not self.access_token.startswith('your-')),
+            'storefront_access_token': bool(self.storefront_access_token and not self.storefront_access_token.startswith('your-')),
+            'api_version': bool(self.api_version),
+            'all_configured': False
+        }
+        
+        status['all_configured'] = all([
+            status['shop_domain'],
+            status['access_token'],
+            status['storefront_access_token'],
+            status['api_version']
+        ])
+        
+        return status
+    
+    def validate_api_connection(self) -> bool:
+        """
+        Validate that the API connection is working properly
+        Returns True if connection is valid, False otherwise
+        """
+        try:
+            # Test Admin API connection
+            admin_url = f"https://{self.shop_domain}/admin/api/{self.api_version}/shop.json"
+            admin_headers = {
+                'X-Shopify-Access-Token': self.access_token,
+                'Content-Type': 'application/json'
+            }
+            
+            import requests
+            response = requests.get(admin_url, headers=admin_headers)
+            if response.status_code == 200:
+                shop_data = response.json()
+                logger.info(f"Admin API connection validated for shop: {shop_data.get('shop', {}).get('name', 'Unknown')}")
+            else:
+                logger.error(f"Admin API validation failed: {response.status_code} - {response.text}")
+                return False
+            
+            # Test Storefront API connection
+            if not self.storefront_access_token or self.storefront_access_token.startswith('your-'):
+                logger.error("Storefront access token not configured or using placeholder value")
+                logger.error("Please update your config.json with a valid Storefront API access token")
+                return False
+                
+            storefront_url = f"https://{self.shop_domain}/api/{self.api_version}/graphql.json"
+            storefront_headers = {
+                'Content-Type': 'application/json',
+                'X-Shopify-Storefront-Access-Token': self.storefront_access_token,
+                'Accept': 'application/json'
+            }
+            
+            test_query = """
+            query {
+                shop {
+                    name
+                    primaryDomain {
+                        url
+                    }
+                }
+            }
+            """
+            
+            response = requests.post(
+                storefront_url,
+                headers=storefront_headers,
+                json={"query": test_query}
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                if 'data' in result and result['data']['shop']:
+                    logger.info(f"Storefront API connection validated for shop: {result['data']['shop']['name']}")
+                    return True
+                else:
+                    logger.error(f"Storefront API validation failed: {result}")
+                    return False
+            else:
+                logger.error(f"Storefront API validation failed: {response.status_code} - {response.text}")
+                return False
+                
+        except Exception as e:
+            logger.error(f"API validation error: {str(e)}")
+            return False
+    
     def create_or_get_product(self, quote_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
         Create or get a product in Shopify for the quote
@@ -154,7 +244,8 @@ class ShopifyIntegration:
             storefront_url = f"https://{self.shop_domain}/api/{self.api_version}/graphql.json"
             headers = {
                 'Content-Type': 'application/json',
-                'X-Shopify-Storefront-Access-Token': self.storefront_access_token
+                'X-Shopify-Storefront-Access-Token': self.storefront_access_token,
+                'Accept': 'application/json'
             }
             
             mutation = """
@@ -188,6 +279,7 @@ class ShopifyIntegration:
                     checkoutUserErrors {
                         field
                         message
+                        code
                     }
                 }
             }
@@ -217,9 +309,15 @@ class ShopifyIntegration:
                 else:
                     errors = result['data']['checkoutCreate']['checkoutUserErrors']
                     logger.error(f"Checkout creation errors: {errors}")
+                    # Log the full response for debugging
+                    logger.debug(f"Full checkout creation response: {result}")
                     return None
             else:
                 logger.error(f"Failed to create checkout: {response.status_code} - {response.text}")
+                # Log request details for debugging
+                logger.debug(f"Request URL: {storefront_url}")
+                logger.debug(f"Request headers: {headers}")
+                logger.debug(f"Request data: {checkout_data}")
                 return None
                 
         except Exception as e:
@@ -242,7 +340,8 @@ class ShopifyIntegration:
             storefront_url = f"https://{self.shop_domain}/api/{self.api_version}/graphql.json"
             headers = {
                 'Content-Type': 'application/json',
-                'X-Shopify-Storefront-Access-Token': self.storefront_access_token
+                'X-Shopify-Storefront-Access-Token': self.storefront_access_token,
+                'Accept': 'application/json'
             }
             
             # Complete checkout mutation
@@ -265,6 +364,7 @@ class ShopifyIntegration:
                     checkoutUserErrors {
                         field
                         message
+                        code
                     }
                 }
             }
@@ -296,9 +396,15 @@ class ShopifyIntegration:
                 else:
                     errors = result['data']['checkoutComplete']['checkoutUserErrors']
                     logger.error(f"Order creation errors: {errors}")
+                    # Log the full response for debugging
+                    logger.debug(f"Full order creation response: {result}")
                     return None
             else:
                 logger.error(f"Failed to complete checkout: {response.status_code} - {response.text}")
+                # Log request details for debugging
+                logger.debug(f"Request URL: {storefront_url}")
+                logger.debug(f"Request headers: {headers}")
+                logger.debug(f"Request variables: {{'checkoutId': '{checkout_id}'}}")
                 return None
                 
         except Exception as e:

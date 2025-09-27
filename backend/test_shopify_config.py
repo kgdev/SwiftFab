@@ -49,6 +49,26 @@ def test_shopify_connection():
         print(f"   Shop: {integration.shop_domain}")
         print(f"   API Version: {integration.api_version}")
         
+        # Check configuration first
+        print("\n🔍 Checking configuration...")
+        config_status = integration.check_configuration()
+        for key, value in config_status.items():
+            if key != 'all_configured':
+                status_icon = "✅" if value else "❌"
+                print(f"   {status_icon} {key.replace('_', ' ').title()}: {'Configured' if value else 'Not configured'}")
+        
+        if not config_status['all_configured']:
+            print("❌ Configuration incomplete. Please update config.json with valid values.")
+            return False
+        
+        # Test API validation
+        print("\n🔍 Validating API connections...")
+        if integration.validate_api_connection():
+            print("✅ Both Admin and Storefront API connections validated")
+        else:
+            print("❌ API validation failed")
+            return False
+        
         return True
     except Exception as e:
         print(f"❌ Shopify connection failed: {e}")
