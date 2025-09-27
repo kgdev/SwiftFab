@@ -15,14 +15,16 @@ from pathlib import Path
 
 from fastapi import FastAPI, File, UploadFile, HTTPException, Depends, Form, Query, Header
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel
+from config import config
 from sqlalchemy import create_engine, Column, String, Text, DateTime, Float, Integer, Boolean, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 import requests
 import urllib3
 from shopify_integration import ShopifyIntegration
+from shopify_oauth import ShopifyOAuth
 
 # Import the STEP parser and price calculator
 import sys
@@ -33,6 +35,9 @@ from final_price_calculator import FinalPriceCalculator
 
 # Disable SSL warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# Initialize Shopify integration once
+shopify_integration = ShopifyIntegration()
 
 # Database setup
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./quotes.db")
@@ -47,6 +52,7 @@ class Quote(Base):
     id = Column(String, primary_key=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     file_name = Column(String)
+    file_path = Column(String)  # Path to the saved uploaded file
     file_content = Column(Text)  # JSON string of parsed data
     status = Column(String, default="created")
     total_price = Column(Float, default=0.0)
@@ -58,12 +64,15 @@ class Part(Base):
     id = Column(String, primary_key=True, index=True)
     quote_id = Column(String, index=True)
     part_index = Column(Integer)
+    name = Column(String)  # Part name
     material_type = Column(String)
     material_grade = Column(String)
     material_thickness = Column(String)
     finish = Column(String)
     quantity = Column(Integer, default=1)
     custom_price = Column(Float)
+    unit_price = Column(Float, default=0.0)  # Calculated unit price
+    total_price = Column(Float, default=0.0)  # Calculated total price (unit_price * quantity)
     body_data = Column(Text)  # JSON string of body data
 
 # Create tables
@@ -170,6 +179,7 @@ def get_db():
 
 # Pydantic models
 class PartUpdate(BaseModel):
+    name: Optional[str] = None
     material_type: Optional[str] = None
     material_grade: Optional[str] = None
     material_thickness: Optional[str] = None
@@ -185,27 +195,8 @@ class QuoteResponse(BaseModel):
     total_price: float
     parts: List[Dict[str, Any]]
 
-class CustomerInfo(BaseModel):
-    email: str
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    phone: Optional[str] = None
-
-class ShippingAddress(BaseModel):
-    first_name: str
-    last_name: str
-    address1: str
-    address2: Optional[str] = None
-    city: str
-    province: str
-    country: str = "US"
-    zip: str
-    phone: Optional[str] = None
-
 class CheckoutRequest(BaseModel):
-    customer_info: CustomerInfo
-    shipping_address: ShippingAddress
-    checkout_type: str = "checkout"  # "checkout" or "order"
+    None
 
 # API Routes
 
@@ -223,9 +214,21 @@ async def create_quote(file: UploadFile = File(...), session_id: str = Form(...)
         if not file.filename.lower().endswith(('.step', '.stp')):
             raise HTTPException(status_code=400, detail="Only STEP/STP files are supported")
         
-        # Save uploaded file temporarily
+        # Create uploads directory if it doesn't exist
+        uploads_dir = Path("uploads")
+        uploads_dir.mkdir(exist_ok=True)
+        
+        # Save uploaded file permanently
+        file_extension = Path(file.filename).suffix
+        saved_filename = f"{uuid.uuid4()}{file_extension}"
+        file_path = uploads_dir / saved_filename
+        
+        content = await file.read()
+        with open(file_path, "wb") as saved_file:
+            saved_file.write(content)
+        
+        # Also create a temporary file for parsing
         with tempfile.NamedTemporaryFile(delete=False, suffix='.step') as tmp_file:
-            content = await file.read()
             tmp_file.write(content)
             tmp_file_path = tmp_file.name
         
@@ -245,6 +248,7 @@ async def create_quote(file: UploadFile = File(...), session_id: str = Form(...)
             db_quote = Quote(
                 id=quote_id,
                 file_name=file.filename,
+                file_path=str(file_path),
                 file_content=json.dumps(parsed_data),
                 status="parsed",
                 session_id=session_id
@@ -253,16 +257,39 @@ async def create_quote(file: UploadFile = File(...), session_id: str = Form(...)
             
             # Create part records
             for i, part_data in enumerate(quote_data['assemblies'][0]['parts']):
+                quantity = part_data.get('quantity', 1)
+                custom_price = part_data.get('customPrice')
+                
+                # Calculate prices for the part
+                # Create a temporary part object for price calculation
+                temp_part = type('TempPart', (), {
+                    'id': part_data['id'],  # Add id attribute
+                    'material_type': part_data.get('materialType'),
+                    'material_grade': part_data.get('materialGrade'),
+                    'material_thickness': part_data.get('materialThickness'),
+                    'finish': part_data.get('finish'),
+                    'custom_price': custom_price
+                })()
+                
+                part_price = calculate_part_price(temp_part, part_data['body'])
+                
+                # Use custom price if available, otherwise use calculated price
+                unit_price = custom_price if custom_price is not None else part_price
+                total_price = unit_price * quantity
+                
                 db_part = Part(
                     id=part_data['id'],
                     quote_id=quote_id,
                     part_index=i,
+                    name=part_data.get('name', f"Part {i + 1}"),
                     material_type=part_data.get('materialType'),
                     material_grade=part_data.get('materialGrade'),
                     material_thickness=part_data.get('materialThickness'),
                     finish=part_data.get('finish'),
-                    quantity=part_data.get('quantity', 1),
-                    custom_price=part_data.get('customPrice'),
+                    quantity=quantity,
+                    custom_price=custom_price,
+                    unit_price=unit_price,
+                    total_price=total_price,
                     body_data=json.dumps(part_data['body'])
                 )
                 db.add(db_part)
@@ -283,69 +310,12 @@ async def create_quote(file: UploadFile = File(...), session_id: str = Form(...)
             
     except Exception as e:
         db.rollback()
+        import traceback
+        error_details = traceback.format_exc()
+        logger.error(f"Error processing STEP file: {str(e)}")
+        logger.error(f"Stack trace: {error_details}")
         raise HTTPException(status_code=500, detail=f"Error processing STEP file: {str(e)}")
 
-@app.put("/api/updateParts/{quote_id}")
-async def update_parts(
-    quote_id: str, 
-    updates: PartUpdate, 
-    session_id: str = Header(..., alias="X-Session-ID"),
-    db: Session = Depends(get_db)
-):
-    """
-    Update parts in a quote with new material/finish settings and recalculate pricing
-    """
-    try:
-        # Get quote and verify session ownership
-        quote = db.query(Quote).filter(Quote.id == quote_id, Quote.session_id == session_id).first()
-        if not quote:
-            raise HTTPException(status_code=404, detail="Quote not found or access denied")
-        
-        # Get all parts for this quote
-        parts = db.query(Part).filter(Part.quote_id == quote_id).all()
-        if not parts:
-            raise HTTPException(status_code=404, detail="No parts found for this quote")
-        
-        # Update parts
-        updated_count = 0
-        for part in parts:
-            if updates.material_type is not None:
-                part.material_type = updates.material_type
-            if updates.material_grade is not None:
-                part.material_grade = updates.material_grade
-            if updates.material_thickness is not None:
-                part.material_thickness = updates.material_thickness
-            if updates.finish is not None:
-                part.finish = updates.finish
-            if updates.quantity is not None:
-                part.quantity = updates.quantity
-            if updates.custom_price is not None:
-                part.custom_price = updates.custom_price
-            updated_count += 1
-        
-        db.commit()
-        
-        # Calculate new pricing (simplified calculation for demo)
-        total_price = await calculate_quote_pricing(quote_id, db)
-        
-        # print the total price
-        print(f"Total price: {total_price}")
-        
-        # Update quote total
-        quote.total_price = total_price
-        db.commit()
-        
-        return {
-            "success": True,
-            "quote_id": quote_id,
-            "updated_parts": updated_count,
-            "total_price": total_price,
-            "message": "Parts updated and pricing recalculated"
-        }
-        
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=f"Error updating parts: {str(e)}")
 
 @app.put("/api/updatePart/{part_id}")
 async def update_part(
@@ -369,6 +339,8 @@ async def update_part(
             raise HTTPException(status_code=404, detail="Quote not found or access denied")
         
         # Update part
+        if updates.name is not None:
+            part.name = updates.name
         if updates.material_type is not None:
             part.material_type = updates.material_type
         if updates.material_grade is not None:
@@ -381,6 +353,23 @@ async def update_part(
             part.quantity = updates.quantity
         if updates.custom_price is not None:
             part.custom_price = updates.custom_price
+        
+        # Recalculate part prices if material/finish/quantity/custom_price changed
+        if (updates.material_type is not None or updates.material_grade is not None or 
+            updates.material_thickness is not None or updates.finish is not None or 
+            updates.quantity is not None or updates.custom_price is not None):
+            
+            # Get body data for price calculation
+            body_data = json.loads(part.body_data) if part.body_data else {}
+            
+            # Calculate new unit price
+            if part.custom_price is not None:
+                part.unit_price = part.custom_price
+            else:
+                part.unit_price = calculate_part_price(part, body_data)
+            
+            # Calculate new total price
+            part.total_price = part.unit_price * part.quantity
         
         db.commit()
         
@@ -396,6 +385,10 @@ async def update_part(
         
     except Exception as e:
         db.rollback()
+        import traceback
+        error_details = traceback.format_exc()
+        logger.error(f"Error updating part: {str(e)}")
+        logger.error(f"Stack trace: {error_details}")
         raise HTTPException(status_code=500, detail=f"Error updating part: {str(e)}")
 
 @app.get("/api/quoteDetails/{quote_id}")
@@ -417,8 +410,9 @@ async def get_quote_details(quote_id: str, session_id: str = Header(None, alias=
             # Session-based access - verify ownership
             quote = db.query(Quote).filter(Quote.id == quote_id, Quote.session_id == session_id).first()
         else:
-            # Public access - get quote without session verification
-            quote = db.query(Quote).filter(Quote.id == quote_id).first()
+            # raise error
+            logger.error(f"Session ID is required for quote details")
+            raise HTTPException(status_code=400, detail="Session ID is required for quote details")
         
         if not quote:
             logger.warning(f"Quote not found: quote_id={quote_id}, session_id={session_id}")
@@ -451,10 +445,8 @@ async def get_quote_details(quote_id: str, session_id: str = Header(None, alias=
                 else:
                     logger.warning(f"Empty body_data for part {part.id}")
                 
-                # Calculate individual part price using helper function
-                logger.debug(f"Calculating price for part {part.id}")
-                part_price = calculate_part_price(part, body_data)
-                logger.debug(f"Calculated price for part {part.id}: {part_price}")
+                # Use stored prices from database
+                logger.debug(f"Using stored prices for part {part.id}: unit_price={part.unit_price}, total_price={part.total_price}")
                 
                 # Validate part data before adding
                 if part.quantity is None or part.quantity <= 0:
@@ -463,6 +455,7 @@ async def get_quote_details(quote_id: str, session_id: str = Header(None, alias=
                 
                 parts_data.append({
                     "id": part.id,
+                    "part_name": part.name,
                     "part_index": part.part_index,
                     "material_type": part.material_type,
                     "material_grade": part.material_grade,
@@ -470,8 +463,8 @@ async def get_quote_details(quote_id: str, session_id: str = Header(None, alias=
                     "finish": part.finish,
                     "quantity": part.quantity,
                     "custom_price": part.custom_price,
-                    "unit_price": round(part_price, 2),
-                    "total_price": round(part_price * part.quantity, 2),
+                    "unit_price": round(part.unit_price or 0.0, 2),
+                    "total_price": round(part.total_price or 0.0, 2),
                     "body": body_data
                 })
                 
@@ -522,7 +515,7 @@ async def create_checkout(
     db: Session = Depends(get_db)
 ):
     """
-    Create a Shopify checkout or order for a quote
+    Create a Shopify cart, checkout, or order for a quote using Storefront API
     """
     try:
         # Verify quote ownership
@@ -530,117 +523,122 @@ async def create_checkout(
         if not quote:
             raise HTTPException(status_code=404, detail="Quote not found or access denied")
         
-        # Initialize Shopify integration
-        shopify_integration = ShopifyIntegration()
+        # Use the global Shopify integration instance
         
-        # Prepare quote data
+        # Get parts for the quote
+        parts = db.query(Part).filter(Part.quote_id == quote_id).order_by(Part.part_index).all()
+        
+        # Format parts data to match quoteDetails API structure
+        parts_data = []
+        for part in parts:
+            # Parse body_data with error handling
+            body_data = {}
+            if part.body_data:
+                try:
+                    body_data = json.loads(part.body_data)
+                except json.JSONDecodeError:
+                    logger.error(f"JSON decode error for part {part.id}")
+                    body_data = {}
+            
+            # Validate part data
+            if part.quantity is None or part.quantity <= 0:
+                part.quantity = 1  # Default to 1 if invalid
+            
+            parts_data.append({
+                "id": part.id,
+                "part_name": part.name,
+                "part_index": part.part_index,
+                "material_type": part.material_type,
+                "material_grade": part.material_grade,
+                "material_thickness": part.material_thickness,
+                "finish": part.finish,
+                "quantity": part.quantity,
+                "custom_price": part.custom_price,
+                "unit_price": round(part.unit_price or 0.0, 2),
+                "total_price": round(part.total_price or 0.0, 2),
+                "body": body_data
+            })
+        
+        # Prepare quote data to match quoteDetails API structure
         quote_data = {
             'id': quote.id,
             'file_name': quote.file_name,
+            'file_path': quote.file_path,
+            'status': quote.status,
             'total_price': quote.total_price,
-            'created_at': quote.created_at.isoformat()
+            'created_at': quote.created_at,
+            'parts': parts_data
         }
+  
         
-        # Prepare customer info
-        customer_info = {
-            'email': checkout_request.customer_info.email,
-            'first_name': checkout_request.customer_info.first_name,
-            'last_name': checkout_request.customer_info.last_name,
-            'phone': checkout_request.customer_info.phone,
-            'shipping_address': {
-                'first_name': checkout_request.shipping_address.first_name,
-                'last_name': checkout_request.shipping_address.last_name,
-                'address1': checkout_request.shipping_address.address1,
-                'address2': checkout_request.shipping_address.address2,
-                'city': checkout_request.shipping_address.city,
-                'province': checkout_request.shipping_address.province,
-                'country': checkout_request.shipping_address.country,
-                'zip': checkout_request.shipping_address.zip,
-                'phone': checkout_request.shipping_address.phone
-            }
-        }
-        
-        # Create checkout or order based on type
-        result = shopify_integration.create_shopify_transaction(quote_data, customer_info, checkout_request.checkout_type)
+        # Create checkout redirect URL
+        result = shopify_integration.create_checkout_redirect_url(quote_data)
         
         if result:
             return {
                 "success": True,
-                "checkout_type": checkout_request.checkout_type,
                 "data": result
             }
         else:
-            raise HTTPException(status_code=500, detail="Failed to create checkout/order")
+            raise HTTPException(status_code=500, detail="Failed to create checkout")
             
     except HTTPException:
         raise
     except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        logger.error(f"Error creating checkout: {str(e)}")
+        logger.error(f"Stack trace: {error_details}")
         raise HTTPException(status_code=500, detail=f"Error creating checkout: {str(e)}")
 
-@app.get("/api/order-status/{order_id}")
-async def get_order_status(order_id: str, session_id: str = Header(..., alias="X-Session-ID")):
-    """
-    Get order status from Shopify
-    """
-    try:
-        shopify_integration = ShopifyIntegration()
-        order_status = shopify_integration.get_order_status(order_id)
-        
-        if order_status:
-            return {
-                "success": True,
-                "order": order_status
-            }
-        else:
-            raise HTTPException(status_code=404, detail="Order not found")
-            
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error getting order status: {str(e)}")
-
-@app.post("/api/createProduct/{quote_id}")
-async def create_product(
-    quote_id: str,
-    product_data: dict,
-    session_id: str = Header(..., alias="X-Session-ID"),
+@app.get("/api/downloadFile/{quote_id}")
+async def download_file(
+    quote_id: str, 
+    admin_key: str = Query(None, description="Admin key to bypass session check"),
+    session_id: str = Header(None, alias="X-Session-ID"), 
     db: Session = Depends(get_db)
 ):
     """
-    Create a product in Shopify for the quote
+    Download the original uploaded file for a quote
+    Can be accessed with session authentication or admin key
     """
     try:
-        # Verify quote ownership
-        quote = db.query(Quote).filter(Quote.id == quote_id, Quote.session_id == session_id).first()
-        if not quote:
-            raise HTTPException(status_code=404, detail="Quote not found or access denied")
+        # Get admin key from configuration
+        security_config = config.get_security_config()
+        ADMIN_KEY = security_config['admin_key']
         
-        # Initialize Shopify integration
-        shopify_integration = ShopifyIntegration()
-        
-        # Prepare quote data
-        quote_data = {
-            'id': quote.id,
-            'file_name': quote.file_name,
-            'total_price': quote.total_price,
-            'created_at': quote.created_at.isoformat()
-        }
-        
-        # Create or get product
-        product_info = shopify_integration.create_or_get_product(quote_data)
-        
-        if product_info:
-            return {
-                "success": True,
-                "data": product_info
-            }
+        # Check if admin key is provided and valid
+        if admin_key and admin_key == ADMIN_KEY:
+            # Admin access - bypass session check
+            quote = db.query(Quote).filter(Quote.id == quote_id).first()
+            if not quote:
+                raise HTTPException(status_code=404, detail="Quote not found")
         else:
-            raise HTTPException(status_code=500, detail="Failed to create product")
+            # Regular user access - require session authentication
+            if not session_id:
+                raise HTTPException(status_code=401, detail="Session ID required or valid admin key")
             
+            quote = db.query(Quote).filter(Quote.id == quote_id, Quote.session_id == session_id).first()
+            if not quote:
+                raise HTTPException(status_code=404, detail="Quote not found or access denied")
+        
+        # Check if file exists
+        if not quote.file_path or not os.path.exists(quote.file_path):
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        # Return the file
+        return FileResponse(
+            path=quote.file_path,
+            filename=quote.file_name,
+            media_type='application/octet-stream'
+        )
+        
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error creating product: {str(e)}")
+        logger.error(f"Error downloading file: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error downloading file: {str(e)}")
+
 
 @app.get("/api/quotes")
 async def list_quotes(session_id: str = Header(..., alias="X-Session-ID"), db: Session = Depends(get_db)):
@@ -663,6 +661,10 @@ async def list_quotes(session_id: str = Header(..., alias="X-Session-ID"), db: S
             ]
         }
     except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        logger.error(f"Error listing quotes: {str(e)}")
+        logger.error(f"Stack trace: {error_details}")
         raise HTTPException(status_code=500, detail=f"Error listing quotes: {str(e)}")
 
 @app.get("/api/materials")
@@ -737,34 +739,33 @@ async def get_materials():
         }
         
     except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        logger.error(f"Error loading materials: {str(e)}")
+        logger.error(f"Stack trace: {error_details}")
         raise HTTPException(status_code=500, detail=f"Error loading materials: {str(e)}")
 
 async def calculate_quote_pricing(quote_id: str, db: Session) -> float:
     """
-    Calculate pricing for a quote using advanced price calculator and update part prices
+    Calculate total pricing for a quote using stored part prices
     """
     try:
         parts = db.query(Part).filter(Part.quote_id == quote_id).all()
         total_price = 0.0
         
         for part in parts:
-            body_data = json.loads(part.body_data) if part.body_data else {}
-            part_price = calculate_part_price(part, body_data)
-            
-            # Update part prices in database
-            part.unit_price = part_price
-            part.total_price = part_price * part.quantity
-            
-            total_price += part.total_price
-        
-        # Commit the part price updates
-        db.commit()
+            # Use stored total_price from database
+            total_price += part.total_price or 0.0
         
         return round(total_price, 2)
         
     except Exception as e:
-        print(f"Error calculating pricing: {e}")
+        import traceback
+        error_details = traceback.format_exc()
+        logger.error(f"Error calculating pricing for quote {quote_id}: {str(e)}")
+        logger.error(f"Stack trace: {error_details}")
         return 0.0
+
 
 if __name__ == "__main__":
     import uvicorn

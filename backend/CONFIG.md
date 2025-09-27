@@ -35,6 +35,9 @@ The SwiftFab backend uses a flexible configuration system that supports both JSO
   "pricing": {
     "default_currency": "USD",
     "tax_rate": 0.08
+  },
+  "security": {
+    "admin_key": "your-admin-key-here"
   }
 }
 ```
@@ -72,6 +75,7 @@ The system automatically falls back to environment variables if configuration va
 | `database.url` | `DATABASE_URL` | `postgresql://...` |
 | `pricing.default_currency` | `PRICING_DEFAULT_CURRENCY` | `EUR` |
 | `pricing.tax_rate` | `PRICING_TAX_RATE` | `0.19` |
+| `security.admin_key` | `SECURITY_ADMIN_KEY` | `your-secure-admin-key` |
 
 ## Using Configuration in Code
 
@@ -98,6 +102,7 @@ shopify_config = config.get_shopify_config()
 app_config = config.get_app_config()
 database_config = config.get_database_config()
 pricing_config = config.get_pricing_config()
+security_config = config.get_security_config()
 ```
 
 ### Using Global Configuration

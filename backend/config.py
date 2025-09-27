@@ -78,8 +78,8 @@ class Config:
         """Get Shopify configuration"""
         return {
             'shop_domain': self.get('shop_domain', 'your-shop.myshopify.com', 'shopify'),
-            'access_token': self.get('access_token', 'your-access-token', 'shopify'),
-            'storefront_access_token': self.get('storefront_access_token', 'your-storefront-token', 'shopify'),
+            'client_id': self.get('client_id', 'your-client-id', 'shopify'),
+            'client_secret': self.get('client_secret', 'your-client-secret', 'shopify'),
             'api_version': self.get('api_version', '2025-07', 'shopify')
         }
     
@@ -103,6 +103,12 @@ class Config:
         return {
             'default_currency': self.get('default_currency', 'USD', 'pricing'),
             'tax_rate': self.get('tax_rate', 0.08, 'pricing')
+        }
+    
+    def get_security_config(self) -> Dict[str, Any]:
+        """Get security configuration"""
+        return {
+            'admin_key': self.get('admin_key', 'swiftfab_admin_2024', 'security')
         }
     
     def reload(self):

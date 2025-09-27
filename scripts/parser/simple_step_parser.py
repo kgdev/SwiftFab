@@ -64,7 +64,7 @@ class SimplifiedStepParser:
                     )
                     
                     # Create part data
-                    part_data = self._create_part_data(body_data, i)
+                    part_data = self._create_part_data(body_data, i, obj)
                     parts_data.append(part_data)
             
             return self._create_quote_structure(parts_data, step_file_path)
@@ -483,9 +483,18 @@ class SimplifiedStepParser:
             "subType": "flat"
         }
     
-    def _create_part_data(self, body_data: Dict[str, Any], part_index: int) -> Dict[str, Any]:
+    def _create_part_data(self, body_data: Dict[str, Any], part_index: int, obj=None) -> Dict[str, Any]:
         """Create part data structure"""
         assembly_id = f"assm_{self._generate_id()}"
+        
+        # Get the shape name from the FreeCAD object
+        shape_name = f"Part {part_index + 1}"  # Default fallback
+        if obj:
+            # Try to get the object name/label from FreeCAD
+            if hasattr(obj, 'Label') and obj.Label:
+                shape_name = obj.Label
+            elif hasattr(obj, 'Name') and obj.Name:
+                shape_name = obj.Name
         
         return {
             "id": f"part_{self._generate_id()}",
@@ -494,8 +503,8 @@ class SimplifiedStepParser:
             "customPrice": None,
             "customNotes": None,
             "createdAt": datetime.now(timezone.utc).isoformat().replace('+00:00', '.000Z'),
-            "number": f"25-09-{self._generate_part_number()}",
-            "name": f"Part {part_index + 1}",
+            "number": f"{self._generate_date_prefix()}-{self._generate_part_number()}",
+            "name": shape_name,
             "bodyId": body_data["id"],
             "quantity": 1,
             "materialType": None,
@@ -523,7 +532,7 @@ class SimplifiedStepParser:
                     "json": {
                         "id": quote_id,
                         "createdAt": datetime.now(timezone.utc).isoformat().replace('+00:00', '.000Z'),
-                        "number": f"25-09-{self._generate_quote_number()}",
+                        "number": f"{self._generate_date_prefix()}-{self._generate_quote_number()}",
                         "userId": None,
                         "orgId": None,
                         "guestId": str(uuid.uuid4()),
@@ -540,7 +549,7 @@ class SimplifiedStepParser:
                             "id": assembly_id,
                             "createdAt": datetime.now(timezone.utc).isoformat().replace('+00:00', '.000Z'),
                             "quoteId": quote_id,
-                            "number": f"25-09-{self._generate_assembly_number()}",
+                            "number": f"{self._generate_date_prefix()}-{self._generate_assembly_number()}",
                             "deleted": False,
                             "name": os.path.basename(step_file_path),
                             "fileId": file_id,
@@ -594,6 +603,11 @@ class SimplifiedStepParser:
         import string
         chars = string.ascii_letters + string.digits
         return ''.join(random.choices(chars, k=22))
+    
+    def _generate_date_prefix(self) -> str:
+        """Generate date prefix in DD-MM format"""
+        now = datetime.now()
+        return f"{now.day:02d}-{now.month:02d}"
     
     def _generate_quote_number(self) -> str:
         """Generate quote number"""
