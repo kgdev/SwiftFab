@@ -298,8 +298,8 @@ const Quote: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-center bg-white rounded-2xl shadow-xl p-8 max-w-md mx-4">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <div className="text-center bg-white rounded-2xl shadow-xl p-6 sm:p-8 max-w-md w-full mx-4">
           <LoadingSpinner size="lg" text="Loading quote..." />
         </div>
       </div>
@@ -308,16 +308,16 @@ const Quote: React.FC = () => {
 
   if (error || !quote) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-center bg-white rounded-2xl shadow-xl p-8 max-w-md mx-4">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <div className="text-center bg-white rounded-2xl shadow-xl p-6 sm:p-8 max-w-md w-full mx-4">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+            <svg className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Quote Not Found</h1>
-          <p className="text-gray-600 mb-6">{error || 'The quote you\'re looking for doesn\'t exist.'}</p>
-          <Button onClick={() => navigate('/')} size="lg">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Quote Not Found</h1>
+          <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">{error || 'The quote you\'re looking for doesn\'t exist.'}</p>
+          <Button onClick={() => navigate('/')} size="lg" className="w-full sm:w-auto">
             Back to Home
           </Button>
         </div>
@@ -329,10 +329,10 @@ const Quote: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100">
       <QuoteHeader quote={quote} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Parts List - Takes up 2/3 of the width */}
-          <div className="lg:col-span-2">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 space-y-4 sm:space-y-6 lg:space-y-8">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+          {/* Parts List - Takes up 2/3 of the width on desktop, full width on mobile */}
+          <div className="xl:col-span-2 order-2 xl:order-1">
             <PartsTable
               parts={quote.parts}
               materials={materials}
@@ -363,8 +363,8 @@ const Quote: React.FC = () => {
             />
           </div>
           
-          {/* Quote Summary - Takes up 1/3 of the width */}
-          <div className="lg:col-span-1">
+          {/* Quote Summary - Takes up 1/3 of the width on desktop, full width on mobile */}
+          <div className="xl:col-span-1 order-1 xl:order-2">
             <QuoteSummary
               quote={quote}
               isCheckingOut={isCheckingOut}
