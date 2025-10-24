@@ -4,6 +4,7 @@ FastAPI backend for SwiftFab Quote System
 """
 
 import os
+import sys
 import json
 import uuid
 import tempfile
@@ -12,6 +13,9 @@ import logging
 from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional
 from pathlib import Path
+
+# Add the backend directory to Python path for Vercel
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi import FastAPI, File, UploadFile, HTTPException, Depends, Form, Query, Header
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,13 +27,15 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 import requests
 import urllib3
+
 from shopify_integration import ShopifyIntegration
 from shopify_oauth import ShopifyOAuth
 
+
+# Database blob storage for Railway
+from database_blob_storage import put, delete
+
 # Import the STEP parser and price calculator
-import sys
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'scripts', 'parser'))
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'scripts', 'analyze'))
 from simple_step_parser import SimplifiedStepParser
 from final_price_calculator import FinalPriceCalculator
 
@@ -40,8 +46,12 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 shopify_integration = ShopifyIntegration()
 
 # Database setup
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./quotes.db")
-engine = create_engine(DATABASE_URL)
+# Use PostgreSQL for Vercel serverless environment
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@localhost:5432/swiftfab")
+# Add SSL parameters for Supabase if not already present
+if "supabase.co" in DATABASE_URL and "sslmode" not in DATABASE_URL:
+    DATABASE_URL += "?sslmode=require"
+engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=300)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -52,7 +62,7 @@ class Quote(Base):
     id = Column(String, primary_key=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     file_name = Column(String)
-    file_path = Column(String)  # Path to the saved uploaded file
+    file_url = Column(String)  # URL to the blob storage
     file_content = Column(Text)  # JSON string of parsed data
     status = Column(String, default="created")
     total_price = Column(Float, default=0.0)
@@ -204,6 +214,15 @@ class CheckoutRequest(BaseModel):
 async def root():
     return {"message": "SwiftFab Quote System API", "version": "1.0.0"}
 
+@app.get("/api/health")
+async def health_check():
+    """Simple health check endpoint to test Lambda runtime"""
+    return {
+        "status": "healthy",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "version": "1.0.0"
+    }
+
 @app.post("/api/createQuote")
 async def create_quote(file: UploadFile = File(...), session_id: str = Form(...), db: Session = Depends(get_db)):
     """
@@ -214,18 +233,16 @@ async def create_quote(file: UploadFile = File(...), session_id: str = Form(...)
         if not file.filename.lower().endswith(('.step', '.stp')):
             raise HTTPException(status_code=400, detail="Only STEP/STP files are supported")
         
-        # Create uploads directory if it doesn't exist
-        uploads_dir = Path("uploads")
-        uploads_dir.mkdir(exist_ok=True)
-        
-        # Save uploaded file permanently
-        file_extension = Path(file.filename).suffix
-        saved_filename = f"{uuid.uuid4()}{file_extension}"
-        file_path = uploads_dir / saved_filename
-        
+        # Read file content
         content = await file.read()
-        with open(file_path, "wb") as saved_file:
-            saved_file.write(content)
+        
+        # Upload to Vercel Blob storage
+        file_extension = Path(file.filename).suffix
+        blob_filename = f"{uuid.uuid4()}{file_extension}"
+        
+        # Upload to Vercel Blob
+        blob_response = put(blob_filename, content, options={"addRandomSuffix": "true"})
+        file_url = blob_response.get("url")
         
         # Also create a temporary file for parsing
         with tempfile.NamedTemporaryFile(delete=False, suffix='.step') as tmp_file:
@@ -248,7 +265,7 @@ async def create_quote(file: UploadFile = File(...), session_id: str = Form(...)
             db_quote = Quote(
                 id=quote_id,
                 file_name=file.filename,
-                file_path=str(file_path),
+                file_url=file_url,
                 file_content=json.dumps(parsed_data),
                 status="parsed",
                 session_id=session_id
@@ -416,7 +433,15 @@ async def get_quote_details(quote_id: str, session_id: str = Header(None, alias=
         
         if not quote:
             logger.warning(f"Quote not found: quote_id={quote_id}, session_id={session_id}")
-            raise HTTPException(status_code=404, detail=f"Quote not found or access denied for quote_id: {quote_id}")
+            # Return a simple JSON response instead of raising HTTPException to avoid Lambda issues
+            return JSONResponse(
+                status_code=404,
+                content={
+                    "success": False,
+                    "error": "Quote not found or access denied",
+                    "quote_id": quote_id
+                }
+            )
         
         logger.info(f"Found quote: {quote.id}, file_name: {quote.file_name}")
         
@@ -437,8 +462,8 @@ async def get_quote_details(quote_id: str, session_id: str = Header(None, alias=
                     try:
                         body_data = json.loads(part.body_data)
                         logger.debug(f"Successfully parsed body_data for part {part.id}")
-                    except json.JSONDecodeError as json_err:
-                        logger.error(f"JSON decode error for part {part.id}: {json_err}")
+                    except json.JSONDecodeError as decode_err:
+                        logger.error(f"JSON decode error for part {part.id}: {decode_err}")
                         logger.error(f"Problematic body_data: {part.body_data[:200]}...")
                         # Use empty dict as fallback
                         body_data = {}
@@ -477,17 +502,27 @@ async def get_quote_details(quote_id: str, session_id: str = Header(None, alias=
         
         logger.info(f"Successfully processed {len(parts_data)} parts")
         
-        return {
+        # Create response
+        response = {
             "success": True,
             "quote": {
                 "id": quote.id,
-                "created_at": quote.created_at,
+                "created_at": quote.created_at.isoformat() if quote.created_at else None,
                 "file_name": quote.file_name,
                 "status": quote.status,
                 "total_price": quote.total_price,
                 "parts": parts_data
             }
         }
+        
+        # Log response size for debugging
+        response_size = len(json.dumps(response))
+        logger.info(f"Response size: {response_size} bytes")
+        
+        if response_size > 6 * 1024 * 1024:  # 6MB limit
+            logger.warning(f"Response size ({response_size} bytes) is large, may cause Lambda issues")
+        
+        return response
         
     except HTTPException:
         # Re-raise HTTP exceptions as-is
@@ -500,12 +535,16 @@ async def get_quote_details(quote_id: str, session_id: str = Header(None, alias=
         logger.error(f"Error message: {str(e)}")
         logger.error(f"Full traceback: {traceback.format_exc()}")
         
-        # Include more context in the error response
-        detail_msg = f"Error getting quote details: {str(e)}"
-        if hasattr(e, '__class__'):
-            detail_msg += f" (Error type: {e.__class__.__name__})"
-        
-        raise HTTPException(status_code=500, detail=detail_msg)
+        # Return JSONResponse instead of raising HTTPException to avoid Lambda issues
+        return JSONResponse(
+            status_code=500,
+            content={
+                "success": False,
+                "error": f"Error getting quote details: {str(e)}",
+                "error_type": type(e).__name__,
+                "quote_id": quote_id
+            }
+        )
 
 @app.post("/api/checkout/{quote_id}")
 async def create_checkout(
@@ -566,7 +605,7 @@ async def create_checkout(
             'file_path': quote.file_path,
             'status': quote.status,
             'total_price': quote.total_price,
-            'created_at': quote.created_at,
+            'created_at': quote.created_at.isoformat() if quote.created_at else None,
             'parts': parts_data
         }
   
@@ -604,7 +643,7 @@ async def download_file(
     """
     try:
         # Get admin key from configuration
-        security_config = config.get_security_config()
+        security_config = config.config.get_security_config()
         ADMIN_KEY = security_config['admin_key']
         
         # Check if admin key is provided and valid
@@ -622,16 +661,18 @@ async def download_file(
             if not quote:
                 raise HTTPException(status_code=404, detail="Quote not found or access denied")
         
-        # Check if file exists
-        if not quote.file_path or not os.path.exists(quote.file_path):
+        # Check if file URL exists
+        if not quote.file_url:
             raise HTTPException(status_code=404, detail="File not found")
         
-        # Return the file
-        return FileResponse(
-            path=quote.file_path,
-            filename=quote.file_name,
-            media_type='application/octet-stream'
-        )
+        # For blob URLs, return a redirect or the URL
+        # In a production setup, you might want to proxy the file or return the URL
+        return JSONResponse({
+            "success": True,
+            "file_url": quote.file_url,
+            "file_name": quote.file_name,
+            "message": "File available at the provided URL"
+        })
         
     except HTTPException:
         raise
@@ -652,7 +693,7 @@ async def list_quotes(session_id: str = Header(..., alias="X-Session-ID"), db: S
             "quotes": [
                 {
                     "id": quote.id,
-                    "created_at": quote.created_at,
+                    "created_at": quote.created_at.isoformat() if quote.created_at else None,
                     "file_name": quote.file_name,
                     "status": quote.status,
                     "total_price": quote.total_price
