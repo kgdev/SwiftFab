@@ -14,11 +14,38 @@ from datetime import datetime, timezone
 from typing import List, Dict, Any
 import os
 import sys
-sys.path.append('/usr/lib/freecad-python3/lib')
 
-import FreeCAD
-import Import
-import Part
+# Add FreeCAD Python path for various environments (Amazon Linux 2023)
+freecad_paths = [
+    '/usr/lib/freecad-python3/lib',
+    '/usr/lib/freecad/lib',
+    '/usr/lib64/freecad/lib',  # Amazon Linux 2023 64-bit
+    '/usr/local/lib/freecad/lib',
+    '/var/task/usr/lib/freecad-python3/lib',  # Vercel Lambda path
+    '/var/task/usr/lib/freecad/lib',           # Vercel Lambda path
+    '/var/task/usr/lib64/freecad/lib'          # Vercel Lambda 64-bit path
+]
+
+for path in freecad_paths:
+    if os.path.exists(path):
+        sys.path.append(path)
+        print(f"Added FreeCAD path: {path}")
+        break
+
+# Set up FreeCAD environment variables for Vercel (Amazon Linux 2023)
+os.environ['FREECAD_USER_HOME'] = '/tmp/freecad'
+os.environ['QT_QPA_PLATFORM'] = 'offscreen'  # Headless mode for serverless
+os.makedirs('/tmp/freecad', exist_ok=True)
+
+try:
+    import FreeCAD
+    import Import
+    import Part
+    print("FreeCAD modules imported successfully")
+except ImportError as e:
+    print(f"FreeCAD import failed: {e}")
+    print("Available paths:", sys.path)
+    raise
 
 
 class SimplifiedStepParser:
@@ -73,6 +100,7 @@ class SimplifiedStepParser:
             # Clean up
             if self.doc:
                 FreeCAD.closeDocument(self.doc.Name)
+    
     
     def _detect_holes_freecad(self, shape):
         """Detect holes using FreeCAD Face topology analysis and return wire perimeter data"""

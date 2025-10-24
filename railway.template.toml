@@ -11,9 +11,9 @@ deploy.database = "postgres"
 
 [template.services.backend]
 name = "swiftfab-backend"
-source = "."
+source = "backend"
 build.builder = "NIXPACKS"
-deploy.startCommand = "python3 backend/main.py"
+deploy.startCommand = "python3 main.py"
 deploy.healthcheckPath = "/api/health"
 deploy.healthcheckTimeout = 100
 deploy.restartPolicyType = "ON_FAILURE"

@@ -18,7 +18,7 @@ class FinalPriceCalculator:
         if material_params_file is None:
             # Look for parameter files in data directory
             script_dir = os.path.dirname(os.path.abspath(__file__))
-            data_dir = os.path.normpath(os.path.join(script_dir, '..', '..', 'data'))
+            data_dir = os.path.normpath(os.path.join(script_dir, '..', 'data'))
             material_params_file = os.path.join(data_dir, 'final_material_parameters.csv')
             finish_params_file = os.path.join(data_dir, 'final_finish_parameters.csv')
         

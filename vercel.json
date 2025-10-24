@@ -1,9 +1,14 @@
 {
   "version": 2,
+  "installCommand": "1111bash build-vercel.sh",
   "builds": [
     {
       "src": "backend/main.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb",
+        "memory": 1024
+      }
     },
     {
       "src": "frontend/package.json",
@@ -22,8 +27,5 @@
       "src": "/(.*)",
       "dest": "frontend/$1"
     }
-  ],
-  "env": {
-    "DATABASE_URL": "sqlite:///./quotes.db"
-  }
+  ]
 }

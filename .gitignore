@@ -1,20 +1,22 @@
 # Dependencies
 node_modules/
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-.venv/
-pip-log.txt
-pip-delete-this-directory.txt
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/*.pyd
+backend/.Python
+backend/env/
+backend/venv/
+backend/ENV/
+backend/env.bak/
+backend/venv.bak/
 
 # Build outputs
-build/
-dist/
-*.egg-info/
+frontend/build/
+frontend/dist/
+backend/dist/
+backend/build/
 
 # Environment variables
 .env
@@ -22,22 +24,17 @@ dist/
 .env.development.local
 .env.test.local
 .env.production.local
+backend/.env
+frontend/.env
 
-# Configuration files (keep examples)
-backend/config.json
-!backend/config.example.json
-
-# Uploaded files
-backend/uploads/
-
-# IDE files
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS files
+# OS
 .DS_Store
 .DS_Store?
 ._*
@@ -47,7 +44,6 @@ ehthumbs.db
 Thumbs.db
 
 # Logs
-logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -55,7 +51,7 @@ yarn-error.log*
 lerna-debug.log*
 
 # Runtime data
-pids/
+pids
 *.pid
 *.seed
 *.pid.lock
@@ -114,87 +110,11 @@ public
 tmp/
 temp/
 
-# Database files
-*.db
-*.sqlite
-*.sqlite3
+# Railway
+.railway/
 
-# Python virtual environments
-pyvenv.cfg
+# Vercel
+.vercel/
 
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# IPython
-profile_default/
-ipython_config.py
-
-# pyenv
-.python-version
-
-# pipenv
-Pipfile.lock
-
-# PEP 582
-__pypackages__/
-
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
-
-# SageMath parsed files
-*.sage.py
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# Unity files (if any)
-*.meta
-*.unity
-*.prefab
-*.mat
-*.asset
-Library/
-Temp/
-Obj/
-Build/
-Builds/
-Logs/
-UserSettings/
-
-# Compiled files
-*.com
-*.class
-*.dll
-*.exe
-*.o
-*.so
-
-# Archives
-*.7z
-*.dmg
-*.gz
-*.iso
-*.jar
-*.rar
-*.tar
-*.zip
-
-# Local development
-.local/
-.vercel
+# Docker
+.dockerignore

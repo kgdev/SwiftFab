@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: swiftfab-quote-system
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: BLOB_READ_WRITE_TOKEN
+        sync: false
+    healthCheckPath: /api/health
