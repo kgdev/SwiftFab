@@ -1,15 +1,9 @@
 [phases.setup]
-nixPkgs = ["python39", "nodejs", "npm"]
+nixPkgs = ["python39", "freecad"]
 
 [phases.install]
 cmds = [
-  "pip install -r requirements.txt",
-  "cd frontend && npm install"
-]
-
-[phases.build]
-cmds = [
-  "cd frontend && npm run build"
+  "pip install -r requirements.txt"
 ]
 
 [start]
