@@ -14,8 +14,7 @@
     {
       "name": "swiftfab-backend",
       "build": {
-        "builder": "DOCKERFILE",
-        "dockerfilePath": "Dockerfile.minimal"
+        "builder": "NIXPACKS"
       },
       "deploy": {
         "startCommand": "python3 backend/main.py",
@@ -33,8 +32,7 @@
     {
       "name": "swiftfab-frontend",
       "build": {
-        "builder": "DOCKERFILE",
-        "dockerfilePath": "frontend/Dockerfile"
+        "builder": "NIXPACKS"
       },
       "deploy": {
         "startCommand": "npm run serve",
