@@ -3,8 +3,8 @@ nixPkgs = ["python39", "freecad"]
 
 [phases.install]
 cmds = [
-  "pip install -r ../requirements.txt"
+  "pip install -r requirements.txt"
 ]
 
 [start]
-cmd = "python3 main.py"
+cmd = "python3 backend/main.py"
