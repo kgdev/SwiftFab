@@ -1,16 +1,42 @@
 {
-  "name": "swiftfab-quote-system",
+  "name": "swiftfab-frontend",
   "version": "1.0.0",
-  "description": "SwiftFab Quote System - STEP file parser with material pricing",
+  "private": true,
+  "description": "SwiftFab Quote System Frontend - React TypeScript application",
   "scripts": {
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:backend": "cd backend && uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000",
-    "dev:frontend": "cd frontend && npm run dev",
-    "build": "npm run build:backend && npm run build:frontend",
-    "build:backend": "cd backend && pip install -r requirements.txt",
-    "build:frontend": "cd frontend && npm run build"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "serve": "serve -s build -l 5000"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.0",
+    "axios": "^1.6.2"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@types/node": "^20.10.4",
+    "react-scripts": "^5.0.1",
+    "typescript": "^5.3.3",
+    "tailwindcss": "^3.3.6",
+    "postcss": "^8.4.32",
+    "autoprefixer": "^10.4.16",
+    "serve": "^14.2.1"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
