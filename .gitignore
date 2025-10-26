@@ -100,7 +100,7 @@ dist
 
 # Gatsby files
 .cache/
-public
+# public - REMOVED: Required for React app's public folder
 
 # Storybook build outputs
 .out
