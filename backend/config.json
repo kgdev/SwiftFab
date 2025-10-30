@@ -9,9 +9,9 @@
     "url": "postgresql://user:password@localhost:5432/swiftfab"
   },
   "shopify": {
-    "shop_domain": "your-shop.myshopify.com",
-    "client_id": "your-client-id",
-    "client_secret": "your-client-secret",
+    "shop_domain": "swiftfab.myshopify.com",
+    "client_id": "77c27735f65a7d256667a84b8d6962a3",
+    "client_secret": "ad165fd5504935ff71db230545fbb3e6",
     "api_version": "2025-07"
   },
   "security": {
