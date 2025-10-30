@@ -249,7 +249,7 @@ async def root():
 async def health_check():
     """
     Comprehensive health check endpoint
-    Tests: API, Database, and Blob Storage
+    Tests: API, Database, Blob Storage, Price Calculator, and FreeCAD Parser
     Uses independent connections to avoid transaction issues
     """
     health_status = {
@@ -354,6 +354,97 @@ async def health_check():
         health_status["checks"]["price_calculator"] = {
             "status": "unhealthy",
             "message": f"Price calculator failed: {str(e)}",
+            "error": type(e).__name__
+        }
+    
+    # Check 4: FreeCAD STEP Parser
+    try:
+        import tempfile
+        import os
+        
+        # Create a minimal valid STEP file for testing
+        test_step_content = """ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(('Test STEP file for health check'),'2;1');
+FILE_NAME('health_test.step','2025-01-01T00:00:00',(''),(''),'','','');
+FILE_SCHEMA(('AUTOMOTIVE_DESIGN'));
+ENDSEC;
+DATA;
+#1=CARTESIAN_POINT('',(0.,0.,0.));
+#2=DIRECTION('',(0.,0.,1.));
+#3=DIRECTION('',(1.,0.,0.));
+#4=AXIS2_PLACEMENT_3D('',#1,#2,#3);
+#5=CIRCLE('',#4,10.);
+ENDSEC;
+END-ISO-10303-21;"""
+        
+        # Write test STEP file
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.step', delete=False) as tmp_file:
+            tmp_file.write(test_step_content)
+            test_step_path = tmp_file.name
+        
+        try:
+            # Test FreeCAD parser initialization
+            parser = SimplifiedStepParser()
+            
+            # Try to parse the test file with timeout protection
+            import signal
+            
+            def test_timeout_handler(signum, frame):
+                raise TimeoutError("FreeCAD test timed out")
+            
+            if hasattr(signal, 'SIGALRM'):
+                old_handler = signal.signal(signal.SIGALRM, test_timeout_handler)
+                signal.alarm(10)  # 10 second timeout for health check
+            
+            try:
+                parsed_result = parser.parse_step_content(test_step_path)
+                
+                # Cancel alarm if successful
+                if hasattr(signal, 'SIGALRM'):
+                    signal.alarm(0)
+                    signal.signal(signal.SIGALRM, old_handler)
+                
+                # Verify result structure
+                if parsed_result and isinstance(parsed_result, list) and len(parsed_result) > 0:
+                    health_status["checks"]["freecad_parser"] = {
+                        "status": "healthy",
+                        "message": "FreeCAD STEP parser working correctly",
+                        "details": {
+                            "parser_init": "passed",
+                            "test_parse": "passed",
+                            "freecad_version": "installed"
+                        }
+                    }
+                else:
+                    all_healthy = False
+                    health_status["checks"]["freecad_parser"] = {
+                        "status": "unhealthy",
+                        "message": "FreeCAD parser returned invalid result",
+                        "error": "Invalid parse result structure"
+                    }
+            except TimeoutError:
+                if hasattr(signal, 'SIGALRM'):
+                    signal.alarm(0)
+                    signal.signal(signal.SIGALRM, old_handler)
+                all_healthy = False
+                health_status["checks"]["freecad_parser"] = {
+                    "status": "unhealthy",
+                    "message": "FreeCAD parser timed out",
+                    "error": "TimeoutError"
+                }
+        finally:
+            # Clean up test file
+            try:
+                os.unlink(test_step_path)
+            except:
+                pass
+                
+    except Exception as e:
+        all_healthy = False
+        health_status["checks"]["freecad_parser"] = {
+            "status": "unhealthy",
+            "message": f"FreeCAD parser test failed: {str(e)}",
             "error": type(e).__name__
         }
     
