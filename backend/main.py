@@ -17,6 +17,10 @@ from pathlib import Path
 # Add the backend directory to Python path for Vercel
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+# Configure logging early (before imports that use it)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 from fastapi import FastAPI, File, UploadFile, HTTPException, Depends, Form, Query, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
@@ -188,10 +192,6 @@ def calculate_part_price(part, body_data):
         logger.error(f"Body data: {body_data}")
         logger.error(f"Traceback: {traceback.format_exc()}")
         return 0.0
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 # Initialize the advanced price calculator
 price_calculator = FinalPriceCalculator()
