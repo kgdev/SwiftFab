@@ -368,7 +368,6 @@ async def health_check():
     else:
         try:
             import tempfile
-            import os
             
             # Create a minimal valid STEP file for testing
             test_step_content = """ISO-10303-21;
