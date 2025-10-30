@@ -11,3 +11,6 @@ urllib3==2.5.0
 shopifyapi==12.7.0
 pandas==2.3.3
 numpy==2.2.6
+
+# CAD/STEP file parsing (alternative to FreeCAD)
+cadquery==2.4.0

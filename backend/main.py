@@ -35,7 +35,21 @@ from shopify_oauth import ShopifyOAuth
 from database_blob_storage import put, delete, get
 
 # Import the STEP parser and price calculator
-from simple_step_parser import SimplifiedStepParser
+# Try to use CADQuery parser first (more stable), fallback to FreeCAD if not available
+try:
+    from cadquery_step_parser import CADQueryStepParser as StepParser
+    PARSER_TYPE = "CADQuery"
+    logger.info("Using CADQuery STEP parser (stable, no segfault issues)")
+except ImportError:
+    try:
+        from simple_step_parser import SimplifiedStepParser as StepParser
+        PARSER_TYPE = "FreeCAD"
+        logger.warning("Using FreeCAD STEP parser (may have segfault issues)")
+    except ImportError:
+        logger.error("No STEP parser available! Install cadquery or freecad")
+        StepParser = None
+        PARSER_TYPE = "None"
+
 from final_price_calculator import FinalPriceCalculator
 
 # Disable SSL warnings
@@ -392,7 +406,7 @@ END-ISO-10303-21;"""
             
             try:
                 # Test FreeCAD parser initialization
-                parser = SimplifiedStepParser()
+                parser = StepParser()
                 
                 # Try to parse the test file with timeout protection
                 import signal
@@ -507,7 +521,7 @@ async def create_quote(file: UploadFile = File(...), session_id: str = Form(...)
         try:
             # Parse STEP file
             logger.info("[createQuote] Step 7: Initializing SimplifiedStepParser")
-            parser = SimplifiedStepParser()
+            parser = StepParser()
             logger.info("[createQuote] Step 8: Starting STEP file parsing (THIS IS WHERE IT LIKELY CRASHES)")
             parsed_data = parser.parse_step_content(tmp_file_path)
             logger.info(f"[createQuote] Step 9: STEP parsing completed successfully")
