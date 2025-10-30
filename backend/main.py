@@ -62,8 +62,10 @@ engine = create_engine(
     pool_size=5,                   # Maximum number of connections to keep
     max_overflow=10,               # Maximum overflow connections
     pool_timeout=30,               # Timeout for getting connection from pool
+    echo_pool=False,               # Don't log pool checkouts/checkins
     connect_args={
         "connect_timeout": 10,     # Connection timeout in seconds
+        "options": "-c statement_timeout=30000",  # 30 second statement timeout
         "keepalives": 1,           # Enable TCP keepalives
         "keepalives_idle": 30,     # Start sending keepalives after 30s
         "keepalives_interval": 10, # Send keepalives every 10s
@@ -202,14 +204,28 @@ def get_db():
     db = SessionLocal()
     try:
         # Test the connection to ensure it's valid
-        db.execute(text("SELECT 1"))
+        # Use a simple query that doesn't start a transaction
+        db.execute(text("SELECT 1")).fetchone()
         yield db
     except Exception as e:
         logger.error(f"Database connection error: {str(e)}")
-        db.rollback()
+        # Rollback any pending transaction
+        try:
+            db.rollback()
+        except:
+            pass
         raise
     finally:
-        db.close()
+        # Ensure any uncommitted transaction is rolled back
+        try:
+            db.rollback()
+        except:
+            pass
+        # Close the session
+        try:
+            db.close()
+        except:
+            pass
 
 # Pydantic models
 class PartUpdate(BaseModel):

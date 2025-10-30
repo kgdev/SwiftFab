@@ -39,8 +39,10 @@ class DatabaseBlobStorage:
             pool_size=5,                   # Maximum number of connections to keep
             max_overflow=10,               # Maximum overflow connections
             pool_timeout=30,               # Timeout for getting connection from pool
+            echo_pool=False,               # Don't log pool checkouts/checkins
             connect_args={
                 "connect_timeout": 10,     # Connection timeout in seconds
+                "options": "-c statement_timeout=30000",  # 30 second statement timeout
                 "keepalives": 1,           # Enable TCP keepalives
                 "keepalives_idle": 30,     # Start sending keepalives after 30s
                 "keepalives_interval": 10, # Send keepalives every 10s
@@ -56,9 +58,8 @@ class DatabaseBlobStorage:
         """
         Store file data in database and return blob URL
         """
+        db = self.SessionLocal()
         try:
-            db = self.SessionLocal()
-            
             # Create blob record
             blob = BlobStorage(
                 filename=filename,
@@ -74,70 +75,71 @@ class DatabaseBlobStorage:
             
             # Return blob URL (we'll use the blob ID as the URL)
             blob_url = f"blob://{blob.id}"
-            
-            db.close()
             return blob_url
             
         except Exception as e:
+            db.rollback()
             print(f"Error storing blob: {e}")
             raise
+        finally:
+            db.close()
     
     def get(self, blob_url: str) -> Optional[bytes]:
         """
         Retrieve file data from database
         """
+        db = self.SessionLocal()
         try:
             # Extract blob ID from URL
             blob_id = blob_url.replace("blob://", "")
             
-            db = self.SessionLocal()
             blob = db.query(BlobStorage).filter(BlobStorage.id == blob_id).first()
             
             if blob:
-                data = blob.data
-                db.close()
-                return data
+                return blob.data
             else:
-                db.close()
                 return None
                 
         except Exception as e:
             print(f"Error retrieving blob: {e}")
             return None
+        finally:
+            db.close()
     
     def delete(self, blob_url: str) -> bool:
         """
         Delete file data from database
         """
+        db = self.SessionLocal()
         try:
             # Extract blob ID from URL
             blob_id = blob_url.replace("blob://", "")
             
-            db = self.SessionLocal()
             blob = db.query(BlobStorage).filter(BlobStorage.id == blob_id).first()
             
             if blob:
                 db.delete(blob)
                 db.commit()
-                db.close()
                 return True
             else:
-                db.close()
                 return False
                 
         except Exception as e:
+            db.rollback()
             print(f"Error deleting blob: {e}")
             return False
+        finally:
+            db.close()
     
     def get_metadata(self, blob_url: str) -> Optional[Dict[str, Any]]:
         """
         Get metadata for a blob
         """
+        db = self.SessionLocal()
         try:
             # Extract blob ID from URL
             blob_id = blob_url.replace("blob://", "")
             
-            db = self.SessionLocal()
             blob = db.query(BlobStorage).filter(BlobStorage.id == blob_id).first()
             
             if blob:
@@ -149,15 +151,15 @@ class DatabaseBlobStorage:
                     "created_at": blob.created_at.isoformat() if blob.created_at else None,
                     "metadata": blob.metadata_json
                 }
-                db.close()
                 return metadata
             else:
-                db.close()
                 return None
                 
         except Exception as e:
             print(f"Error getting blob metadata: {e}")
             return None
+        finally:
+            db.close()
 
 # Global instance
 _blob_storage = None
