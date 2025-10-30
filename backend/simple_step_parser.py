@@ -119,19 +119,26 @@ class SimplifiedStepParser:
             
             # Import the STEP file - THIS IS LIKELY WHERE IT CRASHES
             logger.info(f"[Parser] Step 1.4: Calling Import.insert() - CRASH LIKELY HERE")
+            logger.warning("[Parser] Note: If Import.insert() causes a segmentation fault, the process will crash")
+            logger.warning("[Parser] Consider setting SKIP_FREECAD_HEALTH_CHECK=true if crashes persist")
             
             # Set a timeout for the import operation (60 seconds)
             if hasattr(signal, 'SIGALRM'):
                 signal.alarm(60)
             
             try:
+                # This call may cause a segmentation fault in FreeCAD
+                # If it does, the entire Python process will crash
+                # There's no easy way to catch segfaults in Python
+                logger.info("[Parser] Step 1.4.1: Executing Import.insert()...")
                 Import.insert(step_file_path, self.doc.Name)
+                logger.info("[Parser] Step 1.4.2: Import.insert() returned successfully")
                 
                 # Cancel the alarm if successful
                 if hasattr(signal, 'SIGALRM'):
                     signal.alarm(0)
                     
-                    logger.info(f"[Parser] Step 2: ✅ STEP file imported successfully (Import.insert completed)")
+                logger.info(f"[Parser] Step 2: ✅ STEP file imported successfully (Import.insert completed)")
             except TimeoutException as timeout_error:
                 logger.error(f"[Parser] ❌ TIMEOUT in Import.insert(): FreeCAD took too long (>60s)")
                 raise Exception("FreeCAD Import.insert() timed out after 60 seconds") from timeout_error
