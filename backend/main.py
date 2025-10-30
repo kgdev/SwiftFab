@@ -385,69 +385,69 @@ DATA;
 #5=CIRCLE('',#4,10.);
 ENDSEC;
 END-ISO-10303-21;"""
-        
-        # Write test STEP file
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.step', delete=False) as tmp_file:
-            tmp_file.write(test_step_content)
-            test_step_path = tmp_file.name
-        
-        try:
-            # Test FreeCAD parser initialization
-            parser = SimplifiedStepParser()
             
-            # Try to parse the test file with timeout protection
-            import signal
-            
-            def test_timeout_handler(signum, frame):
-                raise TimeoutError("FreeCAD test timed out")
-            
-            if hasattr(signal, 'SIGALRM'):
-                old_handler = signal.signal(signal.SIGALRM, test_timeout_handler)
-                signal.alarm(10)  # 10 second timeout for health check
+            # Write test STEP file
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.step', delete=False) as tmp_file:
+                tmp_file.write(test_step_content)
+                test_step_path = tmp_file.name
             
             try:
-                parsed_result = parser.parse_step_content(test_step_path)
+                # Test FreeCAD parser initialization
+                parser = SimplifiedStepParser()
                 
-                # Cancel alarm if successful
+                # Try to parse the test file with timeout protection
+                import signal
+                
+                def test_timeout_handler(signum, frame):
+                    raise TimeoutError("FreeCAD test timed out")
+                
                 if hasattr(signal, 'SIGALRM'):
-                    signal.alarm(0)
-                    signal.signal(signal.SIGALRM, old_handler)
+                    old_handler = signal.signal(signal.SIGALRM, test_timeout_handler)
+                    signal.alarm(10)  # 10 second timeout for health check
                 
-                # Verify result structure
-                if parsed_result and isinstance(parsed_result, list) and len(parsed_result) > 0:
-                    health_status["checks"]["freecad_parser"] = {
-                        "status": "healthy",
-                        "message": "FreeCAD STEP parser working correctly",
-                        "details": {
-                            "parser_init": "passed",
-                            "test_parse": "passed",
-                            "freecad_version": "installed"
+                try:
+                    parsed_result = parser.parse_step_content(test_step_path)
+                    
+                    # Cancel alarm if successful
+                    if hasattr(signal, 'SIGALRM'):
+                        signal.alarm(0)
+                        signal.signal(signal.SIGALRM, old_handler)
+                    
+                    # Verify result structure
+                    if parsed_result and isinstance(parsed_result, list) and len(parsed_result) > 0:
+                        health_status["checks"]["freecad_parser"] = {
+                            "status": "healthy",
+                            "message": "FreeCAD STEP parser working correctly",
+                            "details": {
+                                "parser_init": "passed",
+                                "test_parse": "passed",
+                                "freecad_version": "installed"
+                            }
                         }
-                    }
-                else:
+                    else:
+                        all_healthy = False
+                        health_status["checks"]["freecad_parser"] = {
+                            "status": "unhealthy",
+                            "message": "FreeCAD parser returned invalid result",
+                            "error": "Invalid parse result structure"
+                        }
+                except TimeoutError:
+                    if hasattr(signal, 'SIGALRM'):
+                        signal.alarm(0)
+                        signal.signal(signal.SIGALRM, old_handler)
                     all_healthy = False
                     health_status["checks"]["freecad_parser"] = {
                         "status": "unhealthy",
-                        "message": "FreeCAD parser returned invalid result",
-                        "error": "Invalid parse result structure"
+                        "message": "FreeCAD parser timed out",
+                        "error": "TimeoutError"
                     }
-            except TimeoutError:
-                if hasattr(signal, 'SIGALRM'):
-                    signal.alarm(0)
-                    signal.signal(signal.SIGALRM, old_handler)
-                all_healthy = False
-                health_status["checks"]["freecad_parser"] = {
-                    "status": "unhealthy",
-                    "message": "FreeCAD parser timed out",
-                    "error": "TimeoutError"
-                }
-        finally:
-            # Clean up test file
-            try:
-                os.unlink(test_step_path)
-            except:
-                pass
-                    
+            finally:
+                # Clean up test file
+                try:
+                    os.unlink(test_step_path)
+                except:
+                    pass
+                        
         except Exception as e:
             all_healthy = False
             health_status["checks"]["freecad_parser"] = {
