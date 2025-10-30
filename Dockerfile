@@ -66,8 +66,11 @@ export QT_QPA_PLATFORM=offscreen\n\
 exec "$@"' > /usr/local/bin/freecad-wrapper.sh \
     && chmod +x /usr/local/bin/freecad-wrapper.sh
 
-# Expose port
-EXPOSE 8000
+# Set default PORT if not provided
+ENV PORT=8000
+
+# Expose port (Railway will override this with PORT env var)
+EXPOSE $PORT
 
 # Use the wrapper script
 ENTRYPOINT ["/usr/local/bin/freecad-wrapper.sh"]

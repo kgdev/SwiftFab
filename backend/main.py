@@ -810,4 +810,7 @@ async def calculate_quote_pricing(quote_id: str, db: Session) -> float:
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # Use PORT environment variable with fallback to config or 8000
+    port = int(os.getenv("PORT", config.get("port", 8000, "app")))
+    host = os.getenv("HOST", config.get("host", "0.0.0.0", "app"))
+    uvicorn.run(app, host=host, port=port)
