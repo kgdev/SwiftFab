@@ -373,38 +373,60 @@ async def create_quote(file: UploadFile = File(...), session_id: str = Form(...)
     Parse STEP file and create a new quote
     """
     try:
+        logger.info(f"[createQuote] Starting quote creation for file: {file.filename}")
+        
         # Validate file type
         if not file.filename.lower().endswith(('.step', '.stp')):
+            logger.error(f"[createQuote] Invalid file type: {file.filename}")
             raise HTTPException(status_code=400, detail="Only STEP/STP files are supported")
+        
+        logger.info("[createQuote] Step 1: File validation passed")
         
         # Read file content
         content = await file.read()
+        logger.info(f"[createQuote] Step 2: File content read ({len(content)} bytes)")
         
         # Upload to database blob storage
         file_extension = Path(file.filename).suffix
         blob_filename = f"{uuid.uuid4()}{file_extension}"
         
-        # Upload to database blob storage (returns blob URL directly)
-        file_url = put(blob_filename, content, content_type="application/octet-stream")
+        logger.info(f"[createQuote] Step 3: Uploading to blob storage as {blob_filename}")
+        
+        try:
+            # Upload to database blob storage (returns blob URL directly)
+            file_url = put(blob_filename, content, content_type="application/octet-stream")
+            logger.info(f"[createQuote] Step 4: Blob upload successful - {file_url}")
+        except Exception as blob_error:
+            logger.error(f"[createQuote] CRASH at blob storage upload: {str(blob_error)}")
+            raise
         
         # Also create a temporary file for parsing
+        logger.info("[createQuote] Step 5: Creating temporary file for parsing")
         with tempfile.NamedTemporaryFile(delete=False, suffix='.step') as tmp_file:
             tmp_file.write(content)
             tmp_file_path = tmp_file.name
+        logger.info(f"[createQuote] Step 6: Temporary file created at {tmp_file_path}")
         
         try:
             # Parse STEP file
+            logger.info("[createQuote] Step 7: Initializing SimplifiedStepParser")
             parser = SimplifiedStepParser()
+            logger.info("[createQuote] Step 8: Starting STEP file parsing (THIS IS WHERE IT LIKELY CRASHES)")
             parsed_data = parser.parse_step_content(tmp_file_path)
+            logger.info(f"[createQuote] Step 9: STEP parsing completed successfully")
             
             if not parsed_data or not isinstance(parsed_data, list) or len(parsed_data) == 0:
+                logger.error("[createQuote] Parsing failed: no parts found")
                 raise HTTPException(status_code=400, detail="Failed to parse STEP file or no parts found")
             
+            logger.info(f"[createQuote] Step 10: Extracting quote data from parsed result")
             # Extract quote data
             quote_data = parsed_data[0]['result']['data']['json']
             quote_id = quote_data['id']
+            logger.info(f"[createQuote] Step 11: Quote ID extracted: {quote_id}")
             
             # Create quote record
+            logger.info("[createQuote] Step 12: Creating Quote database record")
             db_quote = Quote(
                 id=quote_id,
                 file_name=file.filename,
@@ -414,66 +436,91 @@ async def create_quote(file: UploadFile = File(...), session_id: str = Form(...)
                 session_id=session_id
             )
             db.add(db_quote)
+            logger.info("[createQuote] Step 13: Quote record added to session")
             
             # Create part records
+            logger.info(f"[createQuote] Step 14: Creating part records ({len(quote_data['assemblies'][0]['parts'])} parts)")
             for i, part_data in enumerate(quote_data['assemblies'][0]['parts']):
-                quantity = part_data.get('quantity', 1)
-                custom_price = part_data.get('customPrice')
-                
-                # Calculate prices for the part
-                # Create a temporary part object for price calculation
-                temp_part = type('TempPart', (), {
-                    'id': part_data['id'],  # Add id attribute
-                    'material_type': part_data.get('materialType'),
-                    'material_grade': part_data.get('materialGrade'),
-                    'material_thickness': part_data.get('materialThickness'),
-                    'finish': part_data.get('finish'),
-                    'custom_price': custom_price
-                })()
-                
-                part_price = calculate_part_price(temp_part, part_data['body'])
-                
-                # Use custom price if available, otherwise use calculated price
-                unit_price = custom_price if custom_price is not None else part_price
-                total_price = unit_price * quantity
-                
-                db_part = Part(
-                    id=part_data['id'],
-                    quote_id=quote_id,
-                    part_index=i,
-                    name=part_data.get('name', f"Part {i + 1}"),
-                    material_type=part_data.get('materialType'),
-                    material_grade=part_data.get('materialGrade'),
-                    material_thickness=part_data.get('materialThickness'),
-                    finish=part_data.get('finish'),
-                    quantity=quantity,
-                    custom_price=custom_price,
-                    unit_price=unit_price,
-                    total_price=total_price,
-                    body_data=json.dumps(part_data['body'])
-                )
-                db.add(db_part)
+                try:
+                    logger.info(f"[createQuote] Step 14.{i+1}: Processing part {i+1}")
+                    quantity = part_data.get('quantity', 1)
+                    custom_price = part_data.get('customPrice')
+                    
+                    # Calculate prices for the part
+                    # Create a temporary part object for price calculation
+                    logger.info(f"[createQuote] Step 14.{i+1}.1: Creating temp part for price calculation")
+                    temp_part = type('TempPart', (), {
+                        'id': part_data['id'],  # Add id attribute
+                        'material_type': part_data.get('materialType'),
+                        'material_grade': part_data.get('materialGrade'),
+                        'material_thickness': part_data.get('materialThickness'),
+                        'finish': part_data.get('finish'),
+                        'custom_price': custom_price
+                    })()
+                    
+                    logger.info(f"[createQuote] Step 14.{i+1}.2: Calculating part price")
+                    part_price = calculate_part_price(temp_part, part_data['body'])
+                    
+                    # Use custom price if available, otherwise use calculated price
+                    unit_price = custom_price if custom_price is not None else part_price
+                    total_price = unit_price * quantity
+                    logger.info(f"[createQuote] Step 14.{i+1}.3: Price calculated - unit: ${unit_price}, total: ${total_price}")
+                    
+                    logger.info(f"[createQuote] Step 14.{i+1}.4: Creating Part database record")
+                    db_part = Part(
+                        id=part_data['id'],
+                        quote_id=quote_id,
+                        part_index=i,
+                        name=part_data.get('name', f"Part {i + 1}"),
+                        material_type=part_data.get('materialType'),
+                        material_grade=part_data.get('materialGrade'),
+                        material_thickness=part_data.get('materialThickness'),
+                        finish=part_data.get('finish'),
+                        quantity=quantity,
+                        custom_price=custom_price,
+                        unit_price=unit_price,
+                        total_price=total_price,
+                        body_data=json.dumps(part_data['body'])
+                    )
+                    db.add(db_part)
+                    logger.info(f"[createQuote] Step 14.{i+1}.5: Part {i+1} added to session")
+                except Exception as part_error:
+                    logger.error(f"[createQuote] ERROR processing part {i+1}: {str(part_error)}")
+                    raise
             
+            logger.info("[createQuote] Step 15: Committing transaction to database")
             db.commit()
+            logger.info("[createQuote] Step 16: Transaction committed successfully")
             
-            return {
+            logger.info("[createQuote] Step 17: Creating success response")
+            result = {
                 "success": True,
                 "quote_id": quote_id,
                 "file_name": file.filename,
                 "parts_count": len(quote_data['assemblies'][0]['parts']),
                 "message": "Quote created successfully"
             }
+            logger.info(f"[createQuote] ✅ COMPLETED SUCCESSFULLY: Quote {quote_id} created")
+            return result
             
         finally:
             # Clean up temporary file
-            os.unlink(tmp_file_path)
+            logger.info(f"[createQuote] Cleanup: Deleting temporary file {tmp_file_path}")
+            try:
+                os.unlink(tmp_file_path)
+                logger.info("[createQuote] Cleanup: Temporary file deleted")
+            except Exception as cleanup_error:
+                logger.error(f"[createQuote] Cleanup error: {str(cleanup_error)}")
             
+    except HTTPException:
+        logger.error("[createQuote] HTTPException raised, re-raising")
+        raise
     except Exception as e:
         db.rollback()
         import traceback
         error_details = traceback.format_exc()
-        logger.error(f"Error processing STEP file: {str(e)}")
-        logger.error(f"Stack trace: {error_details}")
+        logger.error(f"[createQuote] ❌ FATAL ERROR: {str(e)}")
+        logger.error(f"[createQuote] Stack trace:\n{error_details}")
         raise HTTPException(status_code=500, detail=f"Error processing STEP file: {str(e)}")
 
 

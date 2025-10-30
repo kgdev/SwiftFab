@@ -59,47 +59,78 @@ class SimplifiedStepParser:
         """Parse STEP file using FreeCAD"""
         
         try:
+            print(f"[Parser] Step 1: Importing STEP file from {step_file_path}")
             # Import the STEP file
             Import.insert(step_file_path, self.doc.Name)
+            print(f"[Parser] Step 2: STEP file imported successfully")
             
             # Get all objects
             objects = self.doc.Objects
+            print(f"[Parser] Step 3: Found {len(objects)} objects in STEP file")
             
             parts_data = []
             
             for i, obj in enumerate(objects):
-                if hasattr(obj, 'Shape'):
-                    shape = obj.Shape
-                    
-                    # Get geometric properties
-                    volume = shape.Volume / (25.4**3)  # Convert mm³ to in³
-                    surface_area = shape.Area / (25.4**2)  # Convert mm² to in²
-                    
-                    # Get bounding box
-                    bbox = shape.BoundBox
-                    length = (bbox.XMax - bbox.XMin) / 25.4  # Length is X-axis dimension
-                    width = (bbox.ZMax - bbox.ZMin) / 25.4   # Width is Z-axis dimension  
-                    height = (bbox.YMax - bbox.YMin) / 25.4  # Height is Y-axis dimension (thickness)
-                    
-                    # Detect holes and get wire perimeter data
-                    holes, wire_perimeters = self._detect_holes_freecad(shape)
-                    
-                    # Create body data with enhanced geometric analysis
-                    body_data = self._create_body_data_enhanced(
-                        volume, surface_area, length, width, height, holes, shape,
-                        i, wire_perimeters
-                    )
-                    
-                    # Create part data
-                    part_data = self._create_part_data(body_data, i, obj)
-                    parts_data.append(part_data)
+                try:
+                    print(f"[Parser] Step 4.{i+1}: Processing object {i+1}/{len(objects)}")
+                    if hasattr(obj, 'Shape'):
+                        shape = obj.Shape
+                        print(f"[Parser] Step 4.{i+1}.1: Object has Shape")
+                        
+                        # Get geometric properties
+                        print(f"[Parser] Step 4.{i+1}.2: Calculating volume and surface area")
+                        volume = shape.Volume / (25.4**3)  # Convert mm³ to in³
+                        surface_area = shape.Area / (25.4**2)  # Convert mm² to in²
+                        print(f"[Parser] Step 4.{i+1}.3: Volume={volume:.3f} in³, SurfaceArea={surface_area:.3f} in²")
+                        
+                        # Get bounding box
+                        print(f"[Parser] Step 4.{i+1}.4: Calculating bounding box")
+                        bbox = shape.BoundBox
+                        length = (bbox.XMax - bbox.XMin) / 25.4  # Length is X-axis dimension
+                        width = (bbox.ZMax - bbox.ZMin) / 25.4   # Width is Z-axis dimension  
+                        height = (bbox.YMax - bbox.YMin) / 25.4  # Height is Y-axis dimension (thickness)
+                        print(f"[Parser] Step 4.{i+1}.5: BBox - L={length:.3f}\", W={width:.3f}\", H={height:.3f}\"")
+                        
+                        # Detect holes and get wire perimeter data
+                        print(f"[Parser] Step 4.{i+1}.6: Detecting holes and wire perimeters")
+                        holes, wire_perimeters = self._detect_holes_freecad(shape)
+                        print(f"[Parser] Step 4.{i+1}.7: Found {len(holes)} holes")
+                        
+                        # Create body data with enhanced geometric analysis
+                        print(f"[Parser] Step 4.{i+1}.8: Creating body data")
+                        body_data = self._create_body_data_enhanced(
+                            volume, surface_area, length, width, height, holes, shape,
+                            i, wire_perimeters
+                        )
+                        print(f"[Parser] Step 4.{i+1}.9: Body data created")
+                        
+                        # Create part data
+                        print(f"[Parser] Step 4.{i+1}.10: Creating part data")
+                        part_data = self._create_part_data(body_data, i, obj)
+                        parts_data.append(part_data)
+                        print(f"[Parser] Step 4.{i+1}.11: Part {i+1} completed")
+                    else:
+                        print(f"[Parser] Step 4.{i+1}: Object has no Shape attribute, skipping")
+                except Exception as obj_error:
+                    print(f"[Parser] ERROR processing object {i+1}: {str(obj_error)}")
+                    raise
             
-            return self._create_quote_structure(parts_data, step_file_path)
+            print(f"[Parser] Step 5: Creating quote structure")
+            result = self._create_quote_structure(parts_data, step_file_path)
+            print(f"[Parser] Step 6: ✅ Parsing completed successfully")
+            return result
             
+        except Exception as e:
+            print(f"[Parser] ❌ FATAL ERROR in parse_step_content: {str(e)}")
+            import traceback
+            print(f"[Parser] Stack trace:\n{traceback.format_exc()}")
+            raise
         finally:
             # Clean up
             if self.doc:
+                print(f"[Parser] Cleanup: Closing FreeCAD document")
                 FreeCAD.closeDocument(self.doc.Name)
+                print(f"[Parser] Cleanup: Document closed")
     
     
     def _detect_holes_freecad(self, shape):
