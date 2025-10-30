@@ -10,10 +10,23 @@ which might be easier to install on some systems.
 import json
 import uuid
 import math
+import signal
 from datetime import datetime, timezone
 from typing import List, Dict, Any
 import os
 import sys
+
+# Timeout handler for FreeCAD operations
+class TimeoutException(Exception):
+    pass
+
+def timeout_handler(signum, frame):
+    raise TimeoutException("FreeCAD operation timed out")
+
+# Set up signal handler for timeout (Unix only, won't work on Windows)
+if hasattr(signal, 'SIGALRM'):
+    signal.signal(signal.SIGALRM, timeout_handler)
+    print("[Parser] Timeout handler registered")
 
 # Add FreeCAD Python path for various environments (Amazon Linux 2023)
 freecad_paths = [
@@ -53,16 +66,57 @@ class SimplifiedStepParser:
     
     def __init__(self):
         # Create a new document
-        self.doc = FreeCAD.newDocument("TempDoc")
+        print("[Parser] __init__: Creating new FreeCAD document...")
+        try:
+            self.doc = FreeCAD.newDocument("TempDoc")
+            print(f"[Parser] __init__: ✅ FreeCAD document created successfully: {self.doc.Name}")
+        except Exception as e:
+            print(f"[Parser] __init__: ❌ CRASH in FreeCAD.newDocument(): {str(e)}")
+            import traceback
+            print(f"[Parser] Stack trace:\n{traceback.format_exc()}")
+            raise
     
     def parse_step_content(self, step_file_path: str) -> Dict[str, Any]:
         """Parse STEP file using FreeCAD"""
         
         try:
             print(f"[Parser] Step 1: Importing STEP file from {step_file_path}")
-            # Import the STEP file
-            Import.insert(step_file_path, self.doc.Name)
-            print(f"[Parser] Step 2: STEP file imported successfully")
+            print(f"[Parser] Step 1.1: File exists: {os.path.exists(step_file_path)}")
+            print(f"[Parser] Step 1.2: File size: {os.path.getsize(step_file_path) if os.path.exists(step_file_path) else 'N/A'} bytes")
+            print(f"[Parser] Step 1.3: Document name: {self.doc.Name}")
+            
+            # Import the STEP file - THIS IS LIKELY WHERE IT CRASHES
+            print(f"[Parser] Step 1.4: Calling Import.insert() - CRASH LIKELY HERE")
+            
+            # Set a timeout for the import operation (60 seconds)
+            if hasattr(signal, 'SIGALRM'):
+                signal.alarm(60)
+            
+            try:
+                Import.insert(step_file_path, self.doc.Name)
+                
+                # Cancel the alarm if successful
+                if hasattr(signal, 'SIGALRM'):
+                    signal.alarm(0)
+                    
+                print(f"[Parser] Step 2: ✅ STEP file imported successfully (Import.insert completed)")
+            except TimeoutException as timeout_error:
+                print(f"[Parser] ❌ TIMEOUT in Import.insert(): FreeCAD took too long (>60s)")
+                raise Exception("FreeCAD Import.insert() timed out after 60 seconds") from timeout_error
+            except Exception as import_error:
+                # Cancel the alarm on error
+                if hasattr(signal, 'SIGALRM'):
+                    signal.alarm(0)
+                    
+                print(f"[Parser] ❌ CRASH in Import.insert(): {str(import_error)}")
+                import traceback
+                print(f"[Parser] Import.insert stack trace:\n{traceback.format_exc()}")
+                
+                # Try to get more information about the error
+                error_type = type(import_error).__name__
+                print(f"[Parser] Error type: {error_type}")
+                
+                raise Exception(f"FreeCAD Import.insert() failed ({error_type}): {str(import_error)}") from import_error
             
             # Get all objects
             objects = self.doc.Objects
