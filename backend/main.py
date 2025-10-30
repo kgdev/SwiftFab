@@ -357,13 +357,21 @@ async def health_check():
             "error": type(e).__name__
         }
     
-    # Check 4: FreeCAD STEP Parser
-    try:
-        import tempfile
-        import os
-        
-        # Create a minimal valid STEP file for testing
-        test_step_content = """ISO-10303-21;
+    # Check 4: FreeCAD STEP Parser (Optional - can be disabled with SKIP_FREECAD_HEALTH_CHECK=true)
+    skip_freecad_check = os.getenv("SKIP_FREECAD_HEALTH_CHECK", "false").lower() == "true"
+    
+    if skip_freecad_check:
+        health_status["checks"]["freecad_parser"] = {
+            "status": "skipped",
+            "message": "FreeCAD health check disabled (SKIP_FREECAD_HEALTH_CHECK=true)"
+        }
+    else:
+        try:
+            import tempfile
+            import os
+            
+            # Create a minimal valid STEP file for testing
+            test_step_content = """ISO-10303-21;
 HEADER;
 FILE_DESCRIPTION(('Test STEP file for health check'),'2;1');
 FILE_NAME('health_test.step','2025-01-01T00:00:00',(''),(''),'','','');
@@ -439,14 +447,14 @@ END-ISO-10303-21;"""
                 os.unlink(test_step_path)
             except:
                 pass
-                
-    except Exception as e:
-        all_healthy = False
-        health_status["checks"]["freecad_parser"] = {
-            "status": "unhealthy",
-            "message": f"FreeCAD parser test failed: {str(e)}",
-            "error": type(e).__name__
-        }
+                    
+        except Exception as e:
+            all_healthy = False
+            health_status["checks"]["freecad_parser"] = {
+                "status": "unhealthy",
+                "message": f"FreeCAD parser test failed: {str(e)}",
+                "error": type(e).__name__
+            }
     
     # Set overall status
     if not all_healthy:

@@ -45,19 +45,47 @@ for path in freecad_paths:
         print(f"Added FreeCAD path: {path}")
         break
 
-# Set up FreeCAD environment variables for Vercel (Amazon Linux 2023)
+# Set up FreeCAD environment variables for headless operation
 os.environ['FREECAD_USER_HOME'] = '/tmp/freecad'
 os.environ['QT_QPA_PLATFORM'] = 'offscreen'  # Headless mode for serverless
+os.environ['DISPLAY'] = ':99'  # Fake display
+os.environ['QT_QPA_FONTDIR'] = '/usr/share/fonts'  # Prevent font errors
+os.environ['MPLCONFIGDIR'] = '/tmp/matplotlib'  # Matplotlib config
 os.makedirs('/tmp/freecad', exist_ok=True)
+os.makedirs('/tmp/matplotlib', exist_ok=True)
+
+# Disable GUI-related warnings
+import warnings
+warnings.filterwarnings('ignore')
+
+print("[FreeCAD Setup] Environment configured for headless operation")
 
 try:
+    print("[FreeCAD Import] Starting FreeCAD module imports...")
+    
+    # Try to import FreeCAD in headless mode
+    import sys
+    sys.argv = ['FreeCAD', '-c']  # Force console mode
+    
     import FreeCAD
+    print("[FreeCAD Import] FreeCAD module imported")
+    
     import Import
+    print("[FreeCAD Import] Import module loaded")
+    
     import Part
-    print("FreeCAD modules imported successfully")
+    print("[FreeCAD Import] Part module loaded")
+    
+    print("[FreeCAD Import] ✅ All FreeCAD modules imported successfully")
+    
 except ImportError as e:
-    print(f"FreeCAD import failed: {e}")
+    print(f"[FreeCAD Import] ❌ FreeCAD import failed: {e}")
     print("Available paths:", sys.path)
+    raise
+except Exception as e:
+    print(f"[FreeCAD Import] ❌ Unexpected error during import: {e}")
+    import traceback
+    print(f"Stack trace:\n{traceback.format_exc()}")
     raise
 
 
