@@ -236,13 +236,12 @@ async def create_quote(file: UploadFile = File(...), session_id: str = Form(...)
         # Read file content
         content = await file.read()
         
-        # Upload to Vercel Blob storage
+        # Upload to database blob storage
         file_extension = Path(file.filename).suffix
         blob_filename = f"{uuid.uuid4()}{file_extension}"
         
-        # Upload to Vercel Blob
-        blob_response = put(blob_filename, content, options={"addRandomSuffix": "true"})
-        file_url = blob_response.get("url")
+        # Upload to database blob storage (returns blob URL directly)
+        file_url = put(blob_filename, content, content_type="application/octet-stream")
         
         # Also create a temporary file for parsing
         with tempfile.NamedTemporaryFile(delete=False, suffix='.step') as tmp_file:
