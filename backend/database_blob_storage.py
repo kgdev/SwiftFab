@@ -30,7 +30,23 @@ class DatabaseBlobStorage:
     """Database-based blob storage implementation"""
     
     def __init__(self, database_url: str):
-        self.engine = create_engine(database_url, pool_pre_ping=True, pool_recycle=300)
+        # Enhanced connection pool settings for Railway
+        # Prevents "connection reset by peer" errors in cloud environments
+        self.engine = create_engine(
+            database_url,
+            pool_pre_ping=True,           # Verify connections before using
+            pool_recycle=300,              # Recycle connections after 5 minutes
+            pool_size=5,                   # Maximum number of connections to keep
+            max_overflow=10,               # Maximum overflow connections
+            pool_timeout=30,               # Timeout for getting connection from pool
+            connect_args={
+                "connect_timeout": 10,     # Connection timeout in seconds
+                "keepalives": 1,           # Enable TCP keepalives
+                "keepalives_idle": 30,     # Start sending keepalives after 30s
+                "keepalives_interval": 10, # Send keepalives every 10s
+                "keepalives_count": 5,     # Drop connection after 5 failed keepalives
+            }
+        )
         self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
         
         # Create tables if they don't exist

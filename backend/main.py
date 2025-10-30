@@ -46,12 +46,30 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 shopify_integration = ShopifyIntegration()
 
 # Database setup
-# Use PostgreSQL for Vercel serverless environment
+# Use PostgreSQL for Railway/cloud environments
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@localhost:5432/swiftfab")
+
 # Add SSL parameters for Supabase if not already present
 if "supabase.co" in DATABASE_URL and "sslmode" not in DATABASE_URL:
     DATABASE_URL += "?sslmode=require"
-engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=300)
+
+# Enhanced connection pool settings for Railway
+# Prevents "connection reset by peer" errors in cloud environments
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,           # Verify connections before using
+    pool_recycle=300,              # Recycle connections after 5 minutes
+    pool_size=5,                   # Maximum number of connections to keep
+    max_overflow=10,               # Maximum overflow connections
+    pool_timeout=30,               # Timeout for getting connection from pool
+    connect_args={
+        "connect_timeout": 10,     # Connection timeout in seconds
+        "keepalives": 1,           # Enable TCP keepalives
+        "keepalives_idle": 30,     # Start sending keepalives after 30s
+        "keepalives_interval": 10, # Send keepalives every 10s
+        "keepalives_count": 5,     # Drop connection after 5 failed keepalives
+    }
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -179,11 +197,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Dependency to get database session
+# Dependency to get database session with better error handling
 def get_db():
     db = SessionLocal()
     try:
+        # Test the connection to ensure it's valid
+        db.execute(text("SELECT 1"))
         yield db
+    except Exception as e:
+        logger.error(f"Database connection error: {str(e)}")
+        db.rollback()
+        raise
     finally:
         db.close()
 
