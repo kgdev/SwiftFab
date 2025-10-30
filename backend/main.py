@@ -23,8 +23,7 @@ from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel
 from config import config
 from sqlalchemy import create_engine, Column, String, Text, DateTime, Float, Integer, Boolean, text
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker, Session, declarative_base
 import requests
 import urllib3
 
