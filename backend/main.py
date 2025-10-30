@@ -33,7 +33,7 @@ from shopify_oauth import ShopifyOAuth
 
 
 # Database blob storage for Railway
-from database_blob_storage import put, delete
+from database_blob_storage import put, delete, get
 
 # Import the STEP parser and price calculator
 from simple_step_parser import SimplifiedStepParser
@@ -239,13 +239,115 @@ async def root():
     return {"message": "SwiftFab Quote System API", "version": "1.0.0"}
 
 @app.get("/api/health")
-async def health_check():
-    """Simple health check endpoint to test Lambda runtime"""
-    return {
+async def health_check(db: Session = Depends(get_db)):
+    """
+    Comprehensive health check endpoint
+    Tests: API, Database, and Blob Storage
+    """
+    health_status = {
         "status": "healthy",
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "checks": {}
     }
+    
+    all_healthy = True
+    
+    # Check 1: Database Connection
+    try:
+        # Test database connection with a simple query
+        result = db.execute(text("SELECT 1 as health_check"))
+        db_result = result.fetchone()
+        
+        # Check if we can query a table
+        quote_count = db.query(Quote).count()
+        
+        health_status["checks"]["database"] = {
+            "status": "healthy",
+            "message": "Database connection successful",
+            "details": {
+                "quotes_count": quote_count,
+                "connection_test": "passed"
+            }
+        }
+    except Exception as e:
+        all_healthy = False
+        health_status["checks"]["database"] = {
+            "status": "unhealthy",
+            "message": f"Database connection failed: {str(e)}",
+            "error": type(e).__name__
+        }
+    
+    # Check 2: Blob Storage (File Upload System)
+    try:
+        # Test blob storage by storing and retrieving a small test file
+        test_data = b"health_check_test_data"
+        test_filename = f"health_check_{datetime.now(timezone.utc).timestamp()}.txt"
+        
+        # Store test data
+        blob_url = put(test_filename, test_data, content_type="text/plain")
+        
+        # Retrieve test data
+        retrieved_data = get(blob_url)
+        
+        # Verify data integrity
+        if retrieved_data == test_data:
+            health_status["checks"]["blob_storage"] = {
+                "status": "healthy",
+                "message": "Blob storage (file upload) working correctly",
+                "details": {
+                    "write_test": "passed",
+                    "read_test": "passed",
+                    "integrity_test": "passed"
+                }
+            }
+            # Clean up test file
+            delete(blob_url)
+        else:
+            all_healthy = False
+            health_status["checks"]["blob_storage"] = {
+                "status": "unhealthy",
+                "message": "Data integrity check failed",
+                "error": "Retrieved data does not match stored data"
+            }
+    except Exception as e:
+        all_healthy = False
+        health_status["checks"]["blob_storage"] = {
+            "status": "unhealthy",
+            "message": f"Blob storage test failed: {str(e)}",
+            "error": type(e).__name__
+        }
+    
+    # Check 3: Price Calculator
+    try:
+        calculator = FinalPriceCalculator()
+        materials = calculator.get_available_materials()
+        finishes = calculator.get_available_finishes()
+        
+        health_status["checks"]["price_calculator"] = {
+            "status": "healthy",
+            "message": "Price calculator initialized successfully",
+            "details": {
+                "materials_loaded": len(materials),
+                "finishes_loaded": len(finishes)
+            }
+        }
+    except Exception as e:
+        all_healthy = False
+        health_status["checks"]["price_calculator"] = {
+            "status": "unhealthy",
+            "message": f"Price calculator failed: {str(e)}",
+            "error": type(e).__name__
+        }
+    
+    # Set overall status
+    if not all_healthy:
+        health_status["status"] = "degraded"
+    
+    # Return appropriate status code
+    status_code = 200 if all_healthy else 503
+    
+    return JSONResponse(content=health_status, status_code=status_code)
 
 @app.post("/api/createQuote")
 async def create_quote(file: UploadFile = File(...), session_id: str = Form(...), db: Session = Depends(get_db)):
