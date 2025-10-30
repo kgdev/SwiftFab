@@ -93,23 +93,22 @@ export DATABASE_URL="postgresql://swiftfab_user:swiftfab_password@localhost:5432
 export PORT=8000
 export HOST=0.0.0.0
 
-# 检查虚拟环境
-if [ ! -d "venv" ]; then
-    echo "创建 Python 虚拟环境..."
-    python3 -m venv venv
+# 检查 UV 是否安装
+if ! command -v uv &> /dev/null; then
+    echo -e "${YELLOW}UV 未安装，正在安装...${NC}"
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    export PATH="$HOME/.cargo/bin:$PATH"
 fi
 
-# 激活虚拟环境并安装依赖
-source venv/bin/activate
-if [ ! -f "venv/.deps_installed" ]; then
-    echo "安装 Python 依赖..."
-    pip install -q -r backend/requirements.txt
-    touch venv/.deps_installed
-fi
+# 使用 UV 安装依赖
+echo "使用 UV 安装 Python 依赖..."
+cd backend
+uv pip install -r requirements.txt --system
+cd ..
 
 # 启动 backend（后台运行）
 echo "启动 Backend 服务器 (http://localhost:8000)..."
-python3 backend/main.py > "$LOG_DIR/backend.log" 2>&1 &
+uv run python3 backend/main.py > "$LOG_DIR/backend.log" 2>&1 &
 BACKEND_PID=$!
 echo $BACKEND_PID > "$BACKEND_PID_FILE"
 
