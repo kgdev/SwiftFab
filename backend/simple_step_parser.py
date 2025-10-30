@@ -11,10 +11,14 @@ import json
 import uuid
 import math
 import signal
+import logging
 from datetime import datetime, timezone
 from typing import List, Dict, Any
 import os
 import sys
+
+# Set up logger
+logger = logging.getLogger(__name__)
 
 # Timeout handler for FreeCAD operations
 class TimeoutException(Exception):
@@ -26,7 +30,7 @@ def timeout_handler(signum, frame):
 # Set up signal handler for timeout (Unix only, won't work on Windows)
 if hasattr(signal, 'SIGALRM'):
     signal.signal(signal.SIGALRM, timeout_handler)
-    print("[Parser] Timeout handler registered")
+    logger.info("[Parser] Timeout handler registered")
 
 # Add FreeCAD Python path for various environments (Amazon Linux 2023)
 freecad_paths = [
@@ -42,7 +46,7 @@ freecad_paths = [
 for path in freecad_paths:
     if os.path.exists(path):
         sys.path.append(path)
-        print(f"Added FreeCAD path: {path}")
+        logger.info(f"Added FreeCAD path: {path}")
         break
 
 # Set up FreeCAD environment variables for headless operation
@@ -58,34 +62,34 @@ os.makedirs('/tmp/matplotlib', exist_ok=True)
 import warnings
 warnings.filterwarnings('ignore')
 
-print("[FreeCAD Setup] Environment configured for headless operation")
+logger.info("[FreeCAD Setup] Environment configured for headless operation")
 
 try:
-    print("[FreeCAD Import] Starting FreeCAD module imports...")
+    logger.info("[FreeCAD Import] Starting FreeCAD module imports...")
     
     # Try to import FreeCAD in headless mode
     import sys
     sys.argv = ['FreeCAD', '-c']  # Force console mode
     
     import FreeCAD
-    print("[FreeCAD Import] FreeCAD module imported")
+    logger.info("[FreeCAD Import] FreeCAD module imported")
     
     import Import
-    print("[FreeCAD Import] Import module loaded")
+    logger.info("[FreeCAD Import] Import module loaded")
     
     import Part
-    print("[FreeCAD Import] Part module loaded")
+    logger.info("[FreeCAD Import] Part module loaded")
     
-    print("[FreeCAD Import] ✅ All FreeCAD modules imported successfully")
+    logger.info("[FreeCAD Import] ✅ All FreeCAD modules imported successfully")
     
 except ImportError as e:
-    print(f"[FreeCAD Import] ❌ FreeCAD import failed: {e}")
-    print("Available paths:", sys.path)
+    logger.error(f"[FreeCAD Import] ❌ FreeCAD import failed: {e}")
+    logger.error(f"Available paths: {sys.path}")
     raise
 except Exception as e:
-    print(f"[FreeCAD Import] ❌ Unexpected error during import: {e}")
+    logger.error(f"[FreeCAD Import] ❌ Unexpected error during import: {e}")
     import traceback
-    print(f"Stack trace:\n{traceback.format_exc()}")
+    logger.error(f"Stack trace:\n{traceback.format_exc()}")
     raise
 
 
@@ -94,27 +98,27 @@ class SimplifiedStepParser:
     
     def __init__(self):
         # Create a new document
-        print("[Parser] __init__: Creating new FreeCAD document...")
+        logger.info("[Parser] __init__: Creating new FreeCAD document...")
         try:
             self.doc = FreeCAD.newDocument("TempDoc")
-            print(f"[Parser] __init__: ✅ FreeCAD document created successfully: {self.doc.Name}")
+            logger.info(f"[Parser] __init__: ✅ FreeCAD document created successfully: {self.doc.Name}")
         except Exception as e:
-            print(f"[Parser] __init__: ❌ CRASH in FreeCAD.newDocument(): {str(e)}")
+            logger.error(f"[Parser] __init__: ❌ CRASH in FreeCAD.newDocument(): {str(e)}")
             import traceback
-            print(f"[Parser] Stack trace:\n{traceback.format_exc()}")
+            logger.error(f"[Parser] Stack trace:\n{traceback.format_exc()}")
             raise
     
     def parse_step_content(self, step_file_path: str) -> Dict[str, Any]:
         """Parse STEP file using FreeCAD"""
         
         try:
-            print(f"[Parser] Step 1: Importing STEP file from {step_file_path}")
-            print(f"[Parser] Step 1.1: File exists: {os.path.exists(step_file_path)}")
-            print(f"[Parser] Step 1.2: File size: {os.path.getsize(step_file_path) if os.path.exists(step_file_path) else 'N/A'} bytes")
-            print(f"[Parser] Step 1.3: Document name: {self.doc.Name}")
+            logger.info(f"[Parser] Step 1: Importing STEP file from {step_file_path}")
+            logger.info(f"[Parser] Step 1.1: File exists: {os.path.exists(step_file_path)}")
+            logger.info(f"[Parser] Step 1.2: File size: {os.path.getsize(step_file_path) if os.path.exists(step_file_path) else 'N/A'} bytes")
+            logger.info(f"[Parser] Step 1.3: Document name: {self.doc.Name}")
             
             # Import the STEP file - THIS IS LIKELY WHERE IT CRASHES
-            print(f"[Parser] Step 1.4: Calling Import.insert() - CRASH LIKELY HERE")
+            logger.info(f"[Parser] Step 1.4: Calling Import.insert() - CRASH LIKELY HERE")
             
             # Set a timeout for the import operation (60 seconds)
             if hasattr(signal, 'SIGALRM'):
@@ -127,92 +131,92 @@ class SimplifiedStepParser:
                 if hasattr(signal, 'SIGALRM'):
                     signal.alarm(0)
                     
-                print(f"[Parser] Step 2: ✅ STEP file imported successfully (Import.insert completed)")
+                    logger.info(f"[Parser] Step 2: ✅ STEP file imported successfully (Import.insert completed)")
             except TimeoutException as timeout_error:
-                print(f"[Parser] ❌ TIMEOUT in Import.insert(): FreeCAD took too long (>60s)")
+                logger.error(f"[Parser] ❌ TIMEOUT in Import.insert(): FreeCAD took too long (>60s)")
                 raise Exception("FreeCAD Import.insert() timed out after 60 seconds") from timeout_error
             except Exception as import_error:
                 # Cancel the alarm on error
                 if hasattr(signal, 'SIGALRM'):
                     signal.alarm(0)
                     
-                print(f"[Parser] ❌ CRASH in Import.insert(): {str(import_error)}")
+                logger.error(f"[Parser] ❌ CRASH in Import.insert(): {str(import_error)}")
                 import traceback
-                print(f"[Parser] Import.insert stack trace:\n{traceback.format_exc()}")
+                logger.error(f"[Parser] Import.insert stack trace:\n{traceback.format_exc()}")
                 
                 # Try to get more information about the error
                 error_type = type(import_error).__name__
-                print(f"[Parser] Error type: {error_type}")
+                logger.error(f"[Parser] Error type: {error_type}")
                 
                 raise Exception(f"FreeCAD Import.insert() failed ({error_type}): {str(import_error)}") from import_error
             
             # Get all objects
             objects = self.doc.Objects
-            print(f"[Parser] Step 3: Found {len(objects)} objects in STEP file")
+            logger.info(f"[Parser] Step 3: Found {len(objects)} objects in STEP file")
             
             parts_data = []
             
             for i, obj in enumerate(objects):
                 try:
-                    print(f"[Parser] Step 4.{i+1}: Processing object {i+1}/{len(objects)}")
+                    logger.info(f"[Parser] Step 4.{i+1}: Processing object {i+1}/{len(objects)}")
                     if hasattr(obj, 'Shape'):
                         shape = obj.Shape
-                        print(f"[Parser] Step 4.{i+1}.1: Object has Shape")
+                        logger.info(f"[Parser] Step 4.{i+1}.1: Object has Shape")
                         
                         # Get geometric properties
-                        print(f"[Parser] Step 4.{i+1}.2: Calculating volume and surface area")
+                        logger.info(f"[Parser] Step 4.{i+1}.2: Calculating volume and surface area")
                         volume = shape.Volume / (25.4**3)  # Convert mm³ to in³
                         surface_area = shape.Area / (25.4**2)  # Convert mm² to in²
-                        print(f"[Parser] Step 4.{i+1}.3: Volume={volume:.3f} in³, SurfaceArea={surface_area:.3f} in²")
+                        logger.info(f"[Parser] Step 4.{i+1}.3: Volume={volume:.3f} in³, SurfaceArea={surface_area:.3f} in²")
                         
                         # Get bounding box
-                        print(f"[Parser] Step 4.{i+1}.4: Calculating bounding box")
+                        logger.info(f"[Parser] Step 4.{i+1}.4: Calculating bounding box")
                         bbox = shape.BoundBox
                         length = (bbox.XMax - bbox.XMin) / 25.4  # Length is X-axis dimension
                         width = (bbox.ZMax - bbox.ZMin) / 25.4   # Width is Z-axis dimension  
                         height = (bbox.YMax - bbox.YMin) / 25.4  # Height is Y-axis dimension (thickness)
-                        print(f"[Parser] Step 4.{i+1}.5: BBox - L={length:.3f}\", W={width:.3f}\", H={height:.3f}\"")
+                        logger.info(f"[Parser] Step 4.{i+1}.5: BBox - L={length:.3f}\", W={width:.3f}\", H={height:.3f}\"")
                         
                         # Detect holes and get wire perimeter data
-                        print(f"[Parser] Step 4.{i+1}.6: Detecting holes and wire perimeters")
+                        logger.info(f"[Parser] Step 4.{i+1}.6: Detecting holes and wire perimeters")
                         holes, wire_perimeters = self._detect_holes_freecad(shape)
-                        print(f"[Parser] Step 4.{i+1}.7: Found {len(holes)} holes")
+                        logger.info(f"[Parser] Step 4.{i+1}.7: Found {len(holes)} holes")
                         
                         # Create body data with enhanced geometric analysis
-                        print(f"[Parser] Step 4.{i+1}.8: Creating body data")
+                        logger.info(f"[Parser] Step 4.{i+1}.8: Creating body data")
                         body_data = self._create_body_data_enhanced(
                             volume, surface_area, length, width, height, holes, shape,
                             i, wire_perimeters
                         )
-                        print(f"[Parser] Step 4.{i+1}.9: Body data created")
+                        logger.info(f"[Parser] Step 4.{i+1}.9: Body data created")
                         
                         # Create part data
-                        print(f"[Parser] Step 4.{i+1}.10: Creating part data")
+                        logger.info(f"[Parser] Step 4.{i+1}.10: Creating part data")
                         part_data = self._create_part_data(body_data, i, obj)
                         parts_data.append(part_data)
-                        print(f"[Parser] Step 4.{i+1}.11: Part {i+1} completed")
+                        logger.info(f"[Parser] Step 4.{i+1}.11: Part {i+1} completed")
                     else:
-                        print(f"[Parser] Step 4.{i+1}: Object has no Shape attribute, skipping")
+                        logger.info(f"[Parser] Step 4.{i+1}: Object has no Shape attribute, skipping")
                 except Exception as obj_error:
-                    print(f"[Parser] ERROR processing object {i+1}: {str(obj_error)}")
+                    logger.info(f"[Parser] ERROR processing object {i+1}: {str(obj_error)}")
                     raise
             
-            print(f"[Parser] Step 5: Creating quote structure")
+            logger.info(f"[Parser] Step 5: Creating quote structure")
             result = self._create_quote_structure(parts_data, step_file_path)
-            print(f"[Parser] Step 6: ✅ Parsing completed successfully")
+            logger.info(f"[Parser] Step 6: ✅ Parsing completed successfully")
             return result
             
         except Exception as e:
-            print(f"[Parser] ❌ FATAL ERROR in parse_step_content: {str(e)}")
+            logger.info(f"[Parser] ❌ FATAL ERROR in parse_step_content: {str(e)}")
             import traceback
-            print(f"[Parser] Stack trace:\n{traceback.format_exc()}")
+            logger.info(f"[Parser] Stack trace:\n{traceback.format_exc()}")
             raise
         finally:
             # Clean up
             if self.doc:
-                print(f"[Parser] Cleanup: Closing FreeCAD document")
+                logger.info(f"[Parser] Cleanup: Closing FreeCAD document")
                 FreeCAD.closeDocument(self.doc.Name)
-                print(f"[Parser] Cleanup: Document closed")
+                logger.info(f"[Parser] Cleanup: Document closed")
     
     
     def _detect_holes_freecad(self, shape):
@@ -225,11 +229,11 @@ class SimplifiedStepParser:
             for face_idx, face in enumerate(shape.Faces):
                 # Print face information
                 face_name = getattr(face, 'Name', f'Face_{face_idx}')
-                print(f"Analyzing face: {face_name} (index {face_idx})")
+                logger.debug(f"Analyzing face: {face_name} (index {face_idx})")
                 
                 # Analyze all wires in the face to detect holes
                 if hasattr(face, 'Wires') and len(face.Wires) > 0:
-                    print(f"  Face has {len(face.Wires)} wire(s)")
+                    logger.info(f"  Face has {len(face.Wires)} wire(s)")
                     
                     # Analyze each wire to determine if it's a hole
                     analyzed_wires, face_wire_perimeters = self._analyze_wires_for_holes(face, face_idx)
@@ -240,7 +244,7 @@ class SimplifiedStepParser:
             holes = self._merge_opposite_holes(holes)
                     
         except Exception as e:
-            print(f"Error in hole detection: {e}")
+            logger.error(f"Error in hole detection: {e}")
             return [], []
         
         return holes, all_wire_perimeters
@@ -253,7 +257,7 @@ class SimplifiedStepParser:
         try:
             wires = face.Wires
             if len(wires) <= 1:
-                print(f"    No inner wires found (only {len(wires)} wire)")
+                logger.info(f"    No inner wires found (only {len(wires)} wire)")
                 # Still record the single wire's perimeter for cut length calculation
                 if len(wires) == 1:
                     wire_perimeters.append({
@@ -289,7 +293,7 @@ class SimplifiedStepParser:
                     except:
                         # If unable to create face, use bounding box area as approximation
                         area = width * height
-                        print(f"Warning: Could not create face from wire {wire_idx}, using bounding box area approximation: {area:.3f} sq in")
+                        logger.warning(f"Warning: Could not create face from wire {wire_idx}, using bounding box area approximation: {area:.3f} sq in")
                     
                     wire_info.append({
                         'index': wire_idx,
@@ -301,10 +305,10 @@ class SimplifiedStepParser:
                         'bbox': bbox
                     })
                     
-                    print(f"    Wire {wire_idx}: Length={wire_length:.3f}\", Area={area:.4f}sq\", Center=({center_x:.3f}, {center_y:.3f}, {center_z:.3f})")
+                    logger.info(f"    Wire {wire_idx}: Length={wire_length:.3f}\", Area={area:.4f}sq\", Center=({center_x:.3f}, {center_y:.3f}, {center_z:.3f})")
                     
                 except Exception as wire_error:
-                    print(f"    Error analyzing wire {wire_idx}: {wire_error}")
+                    logger.info(f"    Error analyzing wire {wire_idx}: {wire_error}")
                     continue
             
             # 智能识别外边界wire - 不能仅依赖面积大小
@@ -325,7 +329,7 @@ class SimplifiedStepParser:
             hole_wires = [w for w in wire_info if w['index'] != outer_wire_idx]
             
             if outer_wire:
-                print(f"    Outer boundary: Wire {outer_wire['index']} (Area: {outer_wire['area']:.4f}, Perimeter: {outer_wire['length']:.3f}\")")
+                logger.info(f"    Outer boundary: Wire {outer_wire['index']} (Area: {outer_wire['area']:.4f}, Perimeter: {outer_wire['length']:.3f}\")")
                 
                 # 处理所有hole wires
                 for hole_wire in hole_wires:
@@ -337,7 +341,7 @@ class SimplifiedStepParser:
                     # 检测hole的形状类型
                     hole_shape = self._detect_hole_shape(hole_wire)
                     
-                    print(f"    Detected hole: Wire {hole_idx}, Shape={hole_shape}, EquivDiam={equiv_diameter:.4f}\", Perimeter={hole_wire['length']:.3f}\"")
+                    logger.info(f"    Detected hole: Wire {hole_idx}, Shape={hole_shape}, EquivDiam={equiv_diameter:.4f}\", Perimeter={hole_wire['length']:.3f}\"")
                     
                     hole_data = {
                         "idx": f"f{face_idx}_w{hole_idx}",
@@ -358,7 +362,7 @@ class SimplifiedStepParser:
                     holes.append(hole_data)
                     
         except Exception as e:
-            print(f"    Error in wire analysis: {e}")
+            logger.info(f"    Error in wire analysis: {e}")
             
         return holes, wire_perimeters
     
@@ -367,9 +371,9 @@ class SimplifiedStepParser:
         if len(wire_info) == 1:
             return wire_info[0]['index']
         
-        print(f"    Analyzing {len(wire_info)} wires to identify outer boundary:")
+        logger.info(f"    Analyzing {len(wire_info)} wires to identify outer boundary:")
         for wire in wire_info:
-            print(f"      Wire {wire['index']}: Area={wire['area']:.4f}, Length={wire['length']:.3f}")
+            logger.info(f"      Wire {wire['index']}: Area={wire['area']:.4f}, Length={wire['length']:.3f}")
         
         # 策略1: 检查包含关系 - 外边界应该包含所有其他wires
         candidates = []
@@ -398,14 +402,14 @@ class SimplifiedStepParser:
             
             if contains_all_others:
                 candidates.append(wire1)
-                print(f"      Wire {wire1['index']} contains ALL other wires (perfect candidate)")
+                logger.info(f"      Wire {wire1['index']} contains ALL other wires (perfect candidate)")
             elif contained_count > 0:
-                print(f"      Wire {wire1['index']} contains {contained_count} other wires")
+                logger.info(f"      Wire {wire1['index']} contains {contained_count} other wires")
         
         # 策略1结果: 如果有完美候选者，选择其中面积最大的
         if candidates:
             outer_wire = max(candidates, key=lambda w: w['area'])
-            print(f"    ✓ Selected outer wire {outer_wire['index']} (containment + largest area)")
+            logger.info(f"    ✓ Selected outer wire {outer_wire['index']} (containment + largest area)")
             return outer_wire['index']
         
         # 策略2: 选择包含最多其他wires的，如果平局则选择面积最大的
@@ -413,13 +417,13 @@ class SimplifiedStepParser:
         if best_containment > 0:
             containment_candidates = [w for w in wire_info if w['containment_score'] == best_containment]
             outer_wire = max(containment_candidates, key=lambda w: w['area'])
-            print(f"    ✓ Selected outer wire {outer_wire['index']} (best containment: {best_containment} wires)")
+            logger.info(f"    ✓ Selected outer wire {outer_wire['index']} (best containment: {best_containment} wires)")
             return outer_wire['index']
         
         # 策略3: 如果包含关系都不明确，选择面积最大的
-        print("    No clear containment relationship found")
+        logger.info("    No clear containment relationship found")
         outer_wire = max(wire_info, key=lambda w: w['area'])
-        print(f"    ✓ Selected outer wire {outer_wire['index']} (largest area fallback)")
+        logger.info(f"    ✓ Selected outer wire {outer_wire['index']} (largest area fallback)")
         return outer_wire['index']
     
     def _detect_hole_shape(self, wire_info: Dict) -> str:
@@ -545,7 +549,7 @@ class SimplifiedStepParser:
             return largest_face_area
             
         except Exception as e:
-            print(f"Error calculating sheet area: {e}")
+            logger.error(f"Error calculating sheet area: {e}")
             return 0.0
 
     def _create_body_data_enhanced(self, volume: float, surface_area: float,
@@ -569,16 +573,16 @@ class SimplifiedStepParser:
             hole_perimeters = sum(hole.get('perimeter', 3.14159 * hole.get('diameter', 0)) for hole in holes)
             cut_length = outer_perimeter + hole_perimeters
             
-            print(f"Cut length calculation:")
-            print(f"  Outer perimeter (largest boundary): {outer_perimeter:.3f}\"")
-            print(f"  All hole perimeters ({len(holes)} holes): {hole_perimeters:.3f}\"")
-            print(f"  Total cut length: {cut_length:.3f}\"")
+            logger.debug(f"Cut length calculation:")
+            logger.info(f"  Outer perimeter (largest boundary): {outer_perimeter:.3f}\"")
+            logger.info(f"  All hole perimeters ({len(holes)} holes): {hole_perimeters:.3f}\"")
+            logger.info(f"  Total cut length: {cut_length:.3f}\"")
         else:
             # Fallback to rectangular approximation if no wire data
             outer_perimeter = 2 * (length + width)
             hole_perimeters = sum(hole.get('perimeter', 3.14159 * hole.get('diameter', 0)) for hole in holes)
             cut_length = outer_perimeter + hole_perimeters
-            print(f"Using fallback cut length calculation: {cut_length:.3f}\" ({len(holes)} holes)")
+            logger.info(f"Using fallback cut length calculation: {cut_length:.3f}\" ({len(holes)} holes)")
         
         # Number of cuts = outer cut + one cut per hole
         num_cuts = len(holes) + 1
@@ -589,7 +593,7 @@ class SimplifiedStepParser:
         # If face analysis fails, fallback to bounding box
         if sheet_area <= 0:
             sheet_area = length * width
-            print(f"Warning: Using fallback bounding box area for sheet area: {sheet_area:.3f} sq in")
+            logger.warning(f"Warning: Using fallback bounding box area for sheet area: {sheet_area:.3f} sq in")
         
         # Calculate material usage based on bounding box dimensions
         mat_use_area = length * width
@@ -727,14 +731,14 @@ class SimplifiedStepParser:
         if not os.path.exists(step_file_path):
             raise FileNotFoundError(f"STEP file not found: {step_file_path}")
         
-        print("Using FreeCAD parser...")
+        logger.info("Using FreeCAD parser...")
         result = self.parse_step_content(step_file_path)
         
         # Save to file if specified
         if output_file_path:
             with open(output_file_path, 'w') as f:
                 json.dump(result, f, indent=4)
-            print(f"Quote data saved to: {output_file_path}")
+            logger.info(f"Quote data saved to: {output_file_path}")
         
         return result
     
@@ -783,8 +787,8 @@ class SimplifiedStepParser:
 def main():
     """Main function"""
     if len(sys.argv) < 2:
-        print("Usage: python simple_step_parser.py <step_file_path> [output_json_path]")
-        print("Example: python simple_step_parser.py custom_parts.step quote_output.json")
+        logger.info("Usage: python simple_step_parser.py <step_file_path> [output_json_path]")
+        logger.info("Example: python simple_step_parser.py custom_parts.step quote_output.json")
         return 1
     
     step_file_path = sys.argv[1]
@@ -795,11 +799,11 @@ def main():
         result = parser.parse_step_file(step_file_path, output_file_path)
         
         if not output_file_path:
-            print(json.dumps(result, indent=2))
+            logger.info(json.dumps(result, indent=2))
         
         
     except Exception as e:
-        print(f"Error: {e}")
+        logger.error(f"Error: {e}")
         return 1
     
     return 0
