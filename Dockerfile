@@ -48,16 +48,14 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy requirements and install Python dependencies
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY . .
+# Copy data directory with CSV parameters
+COPY data /app/data
 
-# Ensure data directory exists and copy CSV files
-RUN mkdir -p /app/data
-COPY ../data/final_material_parameters.csv /app/data/
-COPY ../data/final_finish_parameters.csv /app/data/
+# Copy backend application code
+COPY backend /app/backend
 
 # Create a startup script that sets up FreeCAD environment
 RUN echo '#!/bin/bash\n\
@@ -74,3 +72,4 @@ EXPOSE 8000
 # Use the wrapper script
 ENTRYPOINT ["/usr/local/bin/freecad-wrapper.sh"]
 CMD ["python3", "backend/main.py"]
+
