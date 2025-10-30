@@ -58,14 +58,14 @@ if "supabase.co" in DATABASE_URL and "sslmode" not in DATABASE_URL:
 engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,           # Verify connections before using
-    pool_recycle=300,              # Recycle connections after 5 minutes
-    pool_size=5,                   # Maximum number of connections to keep
-    max_overflow=10,               # Maximum overflow connections
+    pool_recycle=180,              # Recycle connections after 3 minutes (reduced from 5)
+    pool_size=3,                   # Smaller pool size for Railway (reduced from 5)
+    max_overflow=5,                # Reduced overflow (from 10)
     pool_timeout=30,               # Timeout for getting connection from pool
     echo_pool=False,               # Don't log pool checkouts/checkins
     connect_args={
         "connect_timeout": 10,     # Connection timeout in seconds
-        "options": "-c statement_timeout=30000",  # 30 second statement timeout
+        "options": "-c statement_timeout=30000 -c idle_in_transaction_session_timeout=60000",  # Statement and idle timeouts
         "keepalives": 1,           # Enable TCP keepalives
         "keepalives_idle": 30,     # Start sending keepalives after 30s
         "keepalives_interval": 10, # Send keepalives every 10s
@@ -199,33 +199,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Dependency to get database session with better error handling
+# Dependency to get database session with proper transaction management
 def get_db():
     db = SessionLocal()
     try:
-        # Test the connection to ensure it's valid
-        # Use a simple query that doesn't start a transaction
-        db.execute(text("SELECT 1")).fetchone()
         yield db
     except Exception as e:
-        logger.error(f"Database connection error: {str(e)}")
-        # Rollback any pending transaction
+        logger.error(f"Database session error: {str(e)}")
+        # Rollback on any error
         try:
             db.rollback()
-        except:
-            pass
+        except Exception as rollback_error:
+            logger.error(f"Error during rollback: {rollback_error}")
         raise
     finally:
-        # Ensure any uncommitted transaction is rolled back
-        try:
-            db.rollback()
-        except:
-            pass
-        # Close the session
+        # Close the session - SQLAlchemy will handle cleanup
         try:
             db.close()
-        except:
-            pass
+        except Exception as close_error:
+            logger.error(f"Error closing database session: {close_error}")
 
 # Pydantic models
 class PartUpdate(BaseModel):
@@ -255,10 +247,11 @@ async def root():
     return {"message": "SwiftFab Quote System API", "version": "1.0.0"}
 
 @app.get("/api/health")
-async def health_check(db: Session = Depends(get_db)):
+async def health_check():
     """
     Comprehensive health check endpoint
     Tests: API, Database, and Blob Storage
+    Uses independent connections to avoid transaction issues
     """
     health_status = {
         "status": "healthy",
@@ -269,8 +262,10 @@ async def health_check(db: Session = Depends(get_db)):
     
     all_healthy = True
     
-    # Check 1: Database Connection
+    # Check 1: Database Connection (using independent session)
+    db = None
     try:
+        db = SessionLocal()
         # Test database connection with a simple query
         result = db.execute(text("SELECT 1 as health_check"))
         db_result = result.fetchone()
@@ -293,6 +288,13 @@ async def health_check(db: Session = Depends(get_db)):
             "message": f"Database connection failed: {str(e)}",
             "error": type(e).__name__
         }
+    finally:
+        # Always close the database session
+        if db:
+            try:
+                db.close()
+            except:
+                pass
     
     # Check 2: Blob Storage (File Upload System)
     try:
