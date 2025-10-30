@@ -39,20 +39,10 @@ from shopify_oauth import ShopifyOAuth
 from database_blob_storage import put, delete, get
 
 # Import the STEP parser and price calculator
-# Try to use CADQuery parser first (more stable), fallback to FreeCAD if not available
-try:
-    from cadquery_step_parser import CADQueryStepParser as StepParser
-    PARSER_TYPE = "CADQuery"
-    logger.info("Using CADQuery STEP parser (stable, no segfault issues)")
-except ImportError:
-    try:
-        from simple_step_parser import SimplifiedStepParser as StepParser
-        PARSER_TYPE = "FreeCAD"
-        logger.warning("Using FreeCAD STEP parser (may have segfault issues)")
-    except ImportError:
-        logger.error("No STEP parser available! Install cadquery or freecad")
-        StepParser = None
-        PARSER_TYPE = "None"
+# Using CADQuery (stable, no segfault issues)
+from cadquery_step_parser import CADQueryStepParser as StepParser
+PARSER_TYPE = "CADQuery"
+logger.info("Using CADQuery STEP parser")
 
 from final_price_calculator import FinalPriceCalculator
 

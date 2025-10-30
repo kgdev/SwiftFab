@@ -12,6 +12,10 @@ backend/ENV/
 backend/env.bak/
 backend/venv.bak/
 
+# Deprecated/archived files
+*.deprecated
+*.archived
+
 # Build outputs
 frontend/build/
 frontend/dist/
