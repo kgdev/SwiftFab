@@ -893,7 +893,7 @@ async def create_checkout(
         quote_data = {
             'id': quote.id,
             'file_name': quote.file_name,
-            'file_path': quote.file_path,
+            'file_url': quote.file_url,  # Changed from file_path to file_url
             'status': quote.status,
             'total_price': quote.total_price,
             'created_at': quote.created_at.isoformat() if quote.created_at else None,
