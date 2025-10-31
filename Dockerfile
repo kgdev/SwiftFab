@@ -39,5 +39,5 @@ ENV PORT=8000
 # Expose port (Railway will override this with PORT env var)
 EXPOSE $PORT
 
-# Run with uvicorn directly
-CMD ["python3", "-m", "uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run with uvicorn using PORT environment variable
+CMD python3 -m uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}
