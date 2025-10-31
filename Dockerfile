@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install system dependencies for CADQuery (OpenCASCADE)
 RUN apt-get update && apt-get install -y \
     build-essential \
-    libgl1-mesa-glx \
+    libgl1 \
     libglu1-mesa \
     libxrender1 \
     libxext6 \
