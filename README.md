@@ -1,158 +1,233 @@
-# SwiftFab - 3D零件报价系统
+# SwiftFab - 3D Part Quoting System
 
-完整的制造报价系统，支持 STEP 文件解析、自动报价、Shopify 集成。
+A complete manufacturing quote system with STEP file parsing, automated pricing, and Shopify integration.
 
-## 🏗️ **项目结构**
+## 🏗️ **Project Structure**
 
 ```
 SwiftFab/
-├── backend/                    # Python FastAPI 后端
-│   ├── main.py                # 主应用程序
-│   ├── database.py            # 数据库模型和连接
-│   ├── cadquery_step_parser.py # CADQuery STEP文件解析器
-│   ├── final_price_calculator.py # 定价计算器
-│   ├── shopify_integration.py  # Shopify 集成
+├── backend/                    # Python FastAPI backend
+│   ├── main.py                # Main application
+│   ├── database.py            # Database models and connection
+│   ├── cadquery_step_parser.py # CADQuery STEP parser
+│   ├── final_price_calculator.py # Pricing calculator
+│   ├── shopify_integration.py  # Shopify integration
 │   ├── shopify_oauth.py       # Shopify OAuth
-│   ├── config.py              # 配置管理
-│   ├── requirements.txt       # Python 依赖
-│   └── railway.json          # Railway 部署配置
-├── frontend/                  # React + TypeScript 前端
-│   ├── src/                  # 源代码
-│   ├── public/               # 静态资源
-│   ├── package.json          # 前端依赖
-│   └── railway.json          # Railway 部署配置
-├── scripts/                   # 工具脚本
-│   ├── extractor/            # 数据提取脚本
-│   │   ├── fabworks_api_client.py    # Fabworks API 客户端
-│   │   └── permute_all_materials.py  # 材料排列组合测试
-│   └── analyze/              # 数据分析脚本
-│       ├── extract_pricing_data.py   # 提取定价数据
-│       └── final_pricing_analysis.py # 定价公式分析
-├── data/                      # 数据目录（本地）
-├── Dockerfile                 # Docker 构建配置
-├── railway.json              # Railway 根配置
-├── uv.lock                   # UV 依赖锁文件
-└── README.md                 # 本文件
+│   ├── config.py              # Configuration management
+│   ├── requirements.txt       # Python dependencies
+│   └── railway.json          # Railway deployment config
+├── frontend/                  # React + TypeScript frontend
+│   ├── src/                  # Source code
+│   ├── public/               # Static assets
+│   ├── package.json          # Frontend dependencies
+│   └── railway.json          # Railway deployment config
+├── scripts/                   # Utility scripts
+│   ├── extractor/            # Data extraction scripts
+│   │   ├── fabworks_api_client.py    # Fabworks API client
+│   │   └── permute_all_materials.py  # Material permutation tester
+│   └── analyze/              # Data analysis scripts
+│       ├── extract_pricing_data.py   # Extract pricing data
+│       └── final_pricing_analysis.py # Pricing formula analysis
+├── data/                      # Data directory (local)
+├── Dockerfile                 # Docker build config
+├── railway.json              # Railway root config
+├── uv.lock                   # UV dependency lock file
+└── README.md                 # This file
 ```
 
-## 🚀 **本地启动**
+## 🚀 **Local Development Setup (WSL)**
 
-### **前置要求**
+### **Prerequisites**
+- WSL2 (Windows Subsystem for Linux)
 - Python 3.11+ 
 - Node.js 18+
-- PostgreSQL（或使用 Railway 数据库）
-- UV（Python 包管理器）
+- Docker (for PostgreSQL)
+- UV (Python package manager)
 
-### **1. 安装 UV**
+### **1. Install UV**
 ```bash
-# macOS/Linux
+# In WSL
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Windows
-powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+# Restart your shell or run:
+source ~/.bashrc
 ```
 
-### **2. 安装后端依赖**
+### **2. Start PostgreSQL with Docker**
+
+Create a script `start-postgres.sh`:
+```bash
+#!/bin/bash
+# Start PostgreSQL container for local development
+
+docker run -d \
+  --name swiftfab-postgres \
+  -e POSTGRES_USER=swiftfab \
+  -e POSTGRES_PASSWORD=swiftfab123 \
+  -e POSTGRES_DB=swiftfab \
+  -p 5432:5432 \
+  --restart unless-stopped \
+  postgres:15-alpine
+
+echo "PostgreSQL started on localhost:5432"
+echo "Database: swiftfab"
+echo "User: swiftfab"
+echo "Password: swiftfab123"
+echo ""
+echo "Connection string:"
+echo "postgresql://swiftfab:swiftfab123@localhost:5432/swiftfab"
+```
+
+Make it executable and run:
+```bash
+chmod +x start-postgres.sh
+./start-postgres.sh
+```
+
+**Useful Docker commands:**
+```bash
+# Stop PostgreSQL
+docker stop swiftfab-postgres
+
+# Start existing container
+docker start swiftfab-postgres
+
+# View logs
+docker logs swiftfab-postgres
+
+# Remove container (data will be lost)
+docker rm -f swiftfab-postgres
+
+# Access PostgreSQL CLI
+docker exec -it swiftfab-postgres psql -U swiftfab -d swiftfab
+```
+
+### **3. Configure Environment Variables**
+
+Create `backend/.env` file:
+```bash
+# Database Configuration
+DATABASE_URL=postgresql://swiftfab:swiftfab123@localhost:5432/swiftfab
+```
+
+That's it! No other environment variables are required for local development.
+
+### **4. Install Backend Dependencies**
 ```bash
 cd backend
 uv pip install -r requirements.txt
 ```
 
-### **3. 配置环境变量**
-
-创建 `backend/.env` 文件：
-```bash
-# 数据库配置（本地 PostgreSQL 或 Railway）
-DATABASE_URL=postgresql://user:password@localhost:5432/swiftfab
-
-# Azure Blob Storage（用于文件存储）
-AZURE_STORAGE_CONNECTION_STRING=your_connection_string
-AZURE_STORAGE_CONTAINER_NAME=step-files
-
-# Shopify 配置（可选）
-SHOPIFY_STORE_URL=your-store.myshopify.com
-SHOPIFY_ACCESS_TOKEN=your_access_token
-SHOPIFY_API_SECRET=your_api_secret
-```
-
-### **4. 启动后端**
+### **5. Start Backend**
 ```bash
 cd backend
-python main.py
-# 或使用 uvicorn
-python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
+uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-后端将运行在 `http://localhost:8000`
+Backend will be available at `http://localhost:8000`
 
-### **5. 启动前端**
+### **6. Start Frontend**
 
-在新终端中：
+In a new terminal:
 ```bash
 cd frontend
 npm install
 npm start
 ```
 
-前端将运行在 `http://localhost:3000`
+Frontend will be available at `http://localhost:3000`
 
-### **健康检查**
-- 后端健康检查: `http://localhost:8000/api/health`
-- 前端: `http://localhost:3000`
+### **Health Checks**
+- Backend health check: `http://localhost:8000/api/health`
+- Frontend: `http://localhost:3000`
 
-## 🚂 **部署到 Railway**
+### **Quick Start Script**
 
-### **方式一：使用 Railway CLI（推荐）**
-
-#### **1. 安装 Railway CLI**
+Create a `dev.sh` script for easy startup:
 ```bash
-# macOS/Linux
+#!/bin/bash
+# Quick development startup script
+
+# Check if PostgreSQL is running
+if ! docker ps | grep -q swiftfab-postgres; then
+    echo "Starting PostgreSQL..."
+    docker start swiftfab-postgres || ./start-postgres.sh
+fi
+
+# Start backend in background
+echo "Starting backend..."
+cd backend
+uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000 &
+BACKEND_PID=$!
+
+# Start frontend
+echo "Starting frontend..."
+cd ../frontend
+npm start
+
+# Cleanup on exit
+trap "kill $BACKEND_PID" EXIT
+```
+
+Usage:
+```bash
+chmod +x dev.sh
+./dev.sh
+```
+
+## 🚂 **Deploy to Railway**
+
+### **Method 1: Railway CLI (Recommended)**
+
+#### **1. Install Railway CLI**
+```bash
+# In WSL
 curl -fsSL https://railway.app/install.sh | sh
 
-# Windows (使用 npm)
+# Or via npm
 npm install -g @railway/cli
 ```
 
-#### **2. 登录 Railway**
+#### **2. Login to Railway**
 ```bash
 railway login
 ```
 
-#### **3. 初始化项目**
+#### **3. Initialize Project**
 ```bash
-# 在项目根目录
+# In project root
 railway init
 ```
 
-#### **4. 链接到现有项目（如果已创建）**
+#### **4. Link to Existing Project (if already created)**
 ```bash
 railway link
 ```
 
-#### **5. 部署**
+#### **5. Deploy**
 ```bash
-# 部署后端
+# Deploy backend
 cd backend
 railway up
 
-# 部署前端
+# Deploy frontend
 cd frontend
 railway up
 ```
 
-### **方式二：通过 GitHub 自动部署**
+### **Method 2: Auto Deploy via GitHub**
 
-#### **1. 连接 GitHub 仓库**
-- 登录 [Railway Dashboard](https://railway.app/dashboard)
-- 点击 "New Project"
-- 选择 "Deploy from GitHub repo"
-- 选择 `SwiftFab` 仓库
+#### **1. Connect GitHub Repository**
+- Login to [Railway Dashboard](https://railway.app/dashboard)
+- Click "New Project"
+- Select "Deploy from GitHub repo"
+- Choose `SwiftFab` repository
 
-#### **2. 配置服务**
+#### **2. Service Configuration**
 
-Railway 会自动检测到 `railway.json` 配置文件。
+Railway will automatically detect the `railway.json` configuration files.
 
-**后端服务配置：**
+**Backend Service Config:**
 ```json
 {
   "build": {
@@ -168,7 +243,7 @@ Railway 会自动检测到 `railway.json` 配置文件。
 }
 ```
 
-**前端服务配置：**
+**Frontend Service Config:**
 ```json
 {
   "build": {
@@ -184,81 +259,78 @@ Railway 会自动检测到 `railway.json` 配置文件。
 }
 ```
 
-#### **3. 配置环境变量**
+#### **3. Configure Environment Variables**
 
-在 Railway Dashboard 中设置：
-- `DATABASE_URL` - PostgreSQL 连接字符串（自动提供）
-- `AZURE_STORAGE_CONNECTION_STRING` - Azure Blob Storage
-- `AZURE_STORAGE_CONTAINER_NAME` - 容器名称
-- `SHOPIFY_STORE_URL` - Shopify 店铺 URL
-- `SHOPIFY_ACCESS_TOKEN` - Shopify 访问令牌
-- `SHOPIFY_API_SECRET` - Shopify API 密钥
-- `PORT` - 端口（自动设置）
+Set in Railway Dashboard:
+- `DATABASE_URL` - PostgreSQL connection string (automatically provided)
+- `PORT` - Port number (automatically set)
 
-#### **4. 添加 PostgreSQL 数据库**
-- 在 Railway Dashboard 中点击 "New"
-- 选择 "Database" → "PostgreSQL"
-- Railway 会自动生成 `DATABASE_URL` 环境变量
+That's all you need! Other services (Azure Blob, Shopify) are optional.
 
-#### **5. 监控部署**
+#### **4. Add PostgreSQL Database**
+- In Railway Dashboard, click "New"
+- Select "Database" → "PostgreSQL"
+- Railway will automatically generate the `DATABASE_URL` environment variable
+
+#### **5. Monitor Deployment**
 ```bash
-# 查看日志
+# View logs
 railway logs
 
-# 查看后端日志
+# View backend logs
 railway logs --service backend
 
-# 查看前端日志
+# View frontend logs
 railway logs --service frontend
 ```
 
-### **部署注意事项**
+### **Deployment Notes**
 
-1. **健康检查超时**：设置为 100 秒以适应 CADQuery 初始化
-2. **重启策略**：后端设置为最多重试 10 次，前端 5 次
-3. **Railpack 构建器**：使用新的 Railpack 替代已弃用的 Nixpacks
-4. **端口配置**：使用 `$PORT` 环境变量动态绑定端口
+1. **Health Check Timeout**: Set to 100 seconds to accommodate CADQuery initialization
+2. **Restart Policy**: Backend retries up to 10 times, frontend 5 times
+3. **Railpack Builder**: Uses new Railpack instead of deprecated Nixpacks
+4. **Port Configuration**: Uses `$PORT` environment variable for dynamic port binding
 
-### **验证部署**
-- 后端: `https://your-backend-url.railway.app/api/health`
-- 前端: `https://your-frontend-url.railway.app/`
+### **Verify Deployment**
+- Backend: `https://your-backend-url.railway.app/api/health`
+- Frontend: `https://your-frontend-url.railway.app/`
 
-## 📊 **数据提取和分析工具**
+## 📊 **Data Extraction and Analysis Tools**
 
-### **Extractor 脚本 - 数据提取**
+### **Extractor Scripts - Data Extraction**
 
-位于 `scripts/extractor/` 目录下的脚本用于从 Fabworks API 提取数据。
+Scripts located in `scripts/extractor/` directory are used to extract data from Fabworks API.
 
-#### **1. Fabworks API 客户端**
+#### **1. Fabworks API Client**
 
-`fabworks_api_client.py` 提供了与 Fabworks tRPC API 交互的客户端。
+`fabworks_api_client.py` provides a client for interacting with the Fabworks tRPC API.
 
-**基础使用：**
+**Basic Usage:**
 ```bash
 cd scripts/extractor
-python fabworks_api_client.py
+uv run python fabworks_api_client.py
 ```
 
-**主要功能：**
-- 获取材料列表
-- 获取表面处理选项
-- 更新报价信息
-- 批量 API 调用
+**Main Features:**
+- Get materials list
+- Get finish options
+- Update quote information
+- Batch API calls
 
-**示例代码：**
+**Example Code:**
 ```python
 from fabworks_api_client import FabworksAPIClient
 
-# 初始化客户端（需要浏览器 Cookie）
+# Initialize client (requires browser cookies)
 client = FabworksAPIClient(cookies="your_cookie_string")
 
-# 获取材料列表
+# Get materials list
 materials = client.get_materials()
 
-# 获取报价详情
+# Get quote details
 quote = client.get_quote("qte_123456789")
 
-# 更新零件材料
+# Update part materials
 client.update_parts_materials(
     quote_id="qte_123456789",
     material_type="Aluminum",
@@ -267,75 +339,75 @@ client.update_parts_materials(
 )
 ```
 
-#### **2. 材料排列组合测试**
+#### **2. Material Permutation Testing**
 
-`permute_all_materials.py` 用于测试所有材料组合并保存结果。
+`permute_all_materials.py` tests all material combinations and saves results.
 
-**使用方法：**
+**Usage:**
 ```bash
 cd scripts/extractor
 
-# 基础使用
-python permute_all_materials.py --quote-id qte_123456789
+# Basic usage
+uv run python permute_all_materials.py --quote-id qte_123456789
 
-# 指定输出前缀
-python permute_all_materials.py -q qte_123456789 --output-prefix "test_run"
+# With output prefix
+uv run python permute_all_materials.py -q qte_123456789 --output-prefix "test_run"
 
-# 指定材料文件
-python permute_all_materials.py -q qte_123456789 --materials-file samples/materials.json
+# With custom materials file
+uv run python permute_all_materials.py -q qte_123456789 --materials-file samples/materials.json
 ```
 
-**参数说明：**
-- `--quote-id, -q`: Fabworks 报价 ID（必需）
-- `--output-prefix`: 输出文件前缀（可选）
-- `--materials-file`: 材料配置文件路径（默认：`samples/materials.json`）
+**Parameters:**
+- `--quote-id, -q`: Fabworks quote ID (required)
+- `--output-prefix`: Output file prefix (optional)
+- `--materials-file`: Materials config file path (default: `samples/materials.json`)
 
-**功能：**
-1. 从 `materials.json` 读取所有材料组合
-2. 遍历所有 材料类型 × 材料等级 × 厚度 × 表面处理 的组合
-3. 对每个组合调用 Fabworks API 更新报价
-4. 保存每个组合的报价结果到 JSON 文件
-5. 输出到 `data/` 目录
+**Features:**
+1. Read all material combinations from `materials.json`
+2. Iterate through all: material type × grade × thickness × finish combinations
+3. Call Fabworks API to update quote for each combination
+4. Save quote results to JSON files
+5. Output to `data/` directory
 
-**输出格式：**
+**Output Format:**
 ```
 data/
 ├── [output_prefix]_[material]_[grade]_[thickness]_[finish].json
 ├── ...
 ```
 
-**示例输出文件名：**
+**Example Output Filenames:**
 - `test_run_Aluminum_6061-T6_0.125_Anodized-Clear.json`
 - `test_run_Steel_Mild_0.25_PowderCoating-Black.json`
 
-### **Analyze 脚本 - 数据分析**
+### **Analyze Scripts - Data Analysis**
 
-位于 `scripts/analyze/` 目录下的脚本用于分析提取的数据并推导定价公式。
+Scripts located in `scripts/analyze/` directory analyze extracted data and derive pricing formulas.
 
-#### **1. 提取定价数据**
+#### **1. Extract Pricing Data**
 
-`extract_pricing_data.py` 从 JSON 文件中提取定价数据并生成 CSV。
+`extract_pricing_data.py` extracts pricing data from JSON files and generates CSV.
 
-**使用方法：**
+**Usage:**
 ```bash
 cd scripts/analyze
-python extract_pricing_data.py
+uv run python extract_pricing_data.py
 ```
 
-**功能：**
-1. 扫描 `data/` 目录下的所有 JSON 文件
-2. 提取以下字段：
-   - 材料类型（material_type）
-   - 材料等级（material_grade）
-   - 材料厚度（material_thickness）
-   - 表面处理（finish）
-   - 零件尺寸（dimensions）
-   - 材料使用面积（mat_use_sqin）
-   - 切割次数（num_cuts）
-   - 单件价格（price_per_part）
-3. 生成 `pricing_data.csv` 文件
+**Features:**
+1. Scan all JSON files in `data/` directory
+2. Extract the following fields:
+   - Material type (material_type)
+   - Material grade (material_grade)
+   - Material thickness (material_thickness)
+   - Finish (finish)
+   - Part dimensions (dimensions)
+   - Material usage area (mat_use_sqin)
+   - Number of cuts (num_cuts)
+   - Price per part (price_per_part)
+3. Generate `pricing_data.csv` file
 
-**输出 CSV 格式：**
+**Output CSV Format:**
 ```csv
 material_type,material_grade,material_thickness,finish,mat_use_sqin,num_cuts,price_per_part
 Aluminum,6061-T6,0.125,Anodized-Clear,15.23,45,12.50
@@ -343,59 +415,59 @@ Steel,Mild,0.25,PowderCoating-Black,20.15,60,18.75
 ...
 ```
 
-#### **2. 定价公式分析**
+#### **2. Pricing Formula Analysis**
 
-`final_pricing_analysis.py` 使用机器学习分析定价数据并推导计算公式。
+`final_pricing_analysis.py` uses machine learning to analyze pricing data and derive calculation formulas.
 
-**使用方法：**
+**Usage:**
 ```bash
 cd scripts/analyze
 
-# 基础分析
-python final_pricing_analysis.py
+# Basic analysis
+uv run python final_pricing_analysis.py
 
-# 指定数据文件
-python final_pricing_analysis.py --data-file pricing_data.csv
+# Specify data file
+uv run python final_pricing_analysis.py --data-file pricing_data.csv
 ```
 
-**功能：**
-1. **加载数据**：读取 `pricing_data.csv`
-2. **特征工程**：
-   - 创建组合特征（材料面积 × 厚度）
-   - 按材料-等级组合分组
-3. **约束线性回归**：
-   - 对每个材料组合拟合回归模型
-   - 强制所有系数为正数（符合物理意义）
-4. **参数提取**：
-   - 材料基础成本（material_base_cost）
-   - 材料费率（material_rate）：$/（平方英寸 × 英寸）
-   - 切割费率（cut_rate）：$/切割次数
-   - 表面处理基础成本（finish_base_cost）
-   - 表面处理面积费率（finish_surface_rate）：$/平方英寸
-5. **可视化分析**：
-   - R² 分数热力图
-   - 预测 vs 实际价格散点图
-   - 残差分析图
-6. **输出结果**：
-   - `material_parameters.json`: 材料参数
-   - `finish_parameters.json`: 表面处理参数
-   - `pricing_analysis_report.txt`: 详细分析报告
-   - `*.png`: 可视化图表
+**Features:**
+1. **Load Data**: Read `pricing_data.csv`
+2. **Feature Engineering**:
+   - Create combined features (material area × thickness)
+   - Group by material-grade combinations
+3. **Constrained Linear Regression**:
+   - Fit regression model for each material combination
+   - Force all coefficients to be positive (physical meaning)
+4. **Parameter Extraction**:
+   - Material base cost (material_base_cost)
+   - Material rate (material_rate): $ / (sq in × in)
+   - Cut rate (cut_rate): $ / cut
+   - Finish base cost (finish_base_cost)
+   - Finish surface rate (finish_surface_rate): $ / sq in
+5. **Visualization Analysis**:
+   - R² score heatmap
+   - Predicted vs actual price scatter plot
+   - Residual analysis plot
+6. **Output Results**:
+   - `material_parameters.json`: Material parameters
+   - `finish_parameters.json`: Finish parameters
+   - `pricing_analysis_report.txt`: Detailed analysis report
+   - `*.png`: Visualization charts
 
-**定价公式：**
+**Pricing Formula:**
 
 ```python
-# 材料成本
+# Material cost
 material_cost = material_base_cost + (mat_use_sqin × thickness × material_rate) + (num_cuts × cut_rate)
 
-# 表面处理成本
+# Finish cost
 finish_cost = finish_base_cost + (mat_use_sqin × finish_surface_rate)
 
-# 总价格
+# Total price
 total_price = material_cost + finish_cost
 ```
 
-**输出示例：**
+**Output Example:**
 
 `material_parameters.json`:
 ```json
@@ -431,154 +503,156 @@ total_price = material_cost + finish_cost
 }
 ```
 
-### **完整工作流程**
+### **Complete Workflow**
 
 ```bash
-# 步骤 1: 提取数据
+# Step 1: Extract data
 cd scripts/extractor
-python permute_all_materials.py --quote-id qte_YOUR_QUOTE_ID
+uv run python permute_all_materials.py --quote-id qte_YOUR_QUOTE_ID
 
-# 步骤 2: 提取定价数据到 CSV
+# Step 2: Extract pricing data to CSV
 cd ../analyze
-python extract_pricing_data.py
+uv run python extract_pricing_data.py
 
-# 步骤 3: 分析定价公式
-python final_pricing_analysis.py
+# Step 3: Analyze pricing formula
+uv run python final_pricing_analysis.py
 
-# 步骤 4: 查看结果
+# Step 4: View results
 cat material_parameters.json
 cat finish_parameters.json
 cat pricing_analysis_report.txt
 ```
 
-### **数据目录结构**
+### **Data Directory Structure**
 
 ```
 data/
-├── *.json                      # Fabworks API 原始数据
-├── pricing_data.csv            # 提取的定价数据
-├── material_parameters.json    # 材料参数
-├── finish_parameters.json      # 表面处理参数
-├── pricing_analysis_report.txt # 分析报告
-└── *.png                       # 可视化图表
+├── *.json                      # Fabworks API raw data
+├── pricing_data.csv            # Extracted pricing data
+├── material_parameters.json    # Material parameters
+├── finish_parameters.json      # Finish parameters
+├── pricing_analysis_report.txt # Analysis report
+└── *.png                       # Visualization charts
 ```
 
-## 🎯 **核心功能**
+## 🎯 **Core Features**
 
-- ✅ **STEP 文件解析**: 基于 CADQuery 的 STEP 文件分析
-- ✅ **自动报价生成**: 智能制造报价系统
-- ✅ **Shopify 集成**: 完整的电商集成（产品、订单、结账）
-- ✅ **Azure Blob 存储**: STEP 文件云存储
-- ✅ **PostgreSQL 数据库**: 报价和零件数据管理
-- ✅ **响应式 UI**: 现代化 React 界面
-- ✅ **健康监控**: 内置健康检查端点
-- ✅ **自动重启**: 失败时自动恢复
-- ✅ **数据提取工具**: Fabworks API 数据提取
-- ✅ **定价分析**: 机器学习定价公式推导
+- ✅ **STEP File Parsing**: CADQuery-based STEP file analysis
+- ✅ **Automated Quote Generation**: Intelligent manufacturing quote system
+- ✅ **Shopify Integration**: Complete e-commerce integration (products, orders, checkout)
+- ✅ **Azure Blob Storage**: STEP file cloud storage
+- ✅ **PostgreSQL Database**: Quote and part data management
+- ✅ **Responsive UI**: Modern React interface
+- ✅ **Health Monitoring**: Built-in health check endpoints
+- ✅ **Auto Restart**: Automatic recovery on failure
+- ✅ **Data Extraction Tools**: Fabworks API data extraction
+- ✅ **Pricing Analysis**: Machine learning pricing formula derivation
 
-## 🛠️ **技术栈**
+## 🛠️ **Tech Stack**
 
-### **后端**
-- **框架**: FastAPI
-- **CAD 解析**: CADQuery 2.4.0
-- **数据库**: PostgreSQL + SQLAlchemy
-- **存储**: Azure Blob Storage
-- **电商**: Shopify API
-- **部署**: Railway (Railpack)
+### **Backend**
+- **Framework**: FastAPI
+- **CAD Parsing**: CADQuery 2.4.0
+- **Database**: PostgreSQL + SQLAlchemy
+- **Storage**: Azure Blob Storage
+- **E-commerce**: Shopify API
+- **Deployment**: Railway (Railpack)
 
-### **前端**
-- **框架**: React 18 + TypeScript
-- **路由**: React Router v6
+### **Frontend**
+- **Framework**: React 18 + TypeScript
+- **Routing**: React Router v6
 - **HTTP**: Axios
-- **样式**: Tailwind CSS
-- **构建**: React Scripts
-- **服务**: Serve
+- **Styling**: Tailwind CSS
+- **Build**: React Scripts
+- **Serve**: Serve
 
-### **工具**
-- **包管理**: UV (Python), NPM (Node.js)
-- **API 客户端**: Fabworks tRPC
-- **数据分析**: Pandas, NumPy, Scikit-learn
-- **可视化**: Matplotlib, Seaborn
+### **Tools**
+- **Package Management**: UV (Python), NPM (Node.js)
+- **API Client**: Fabworks tRPC
+- **Data Analysis**: Pandas, NumPy, Scikit-learn
+- **Visualization**: Matplotlib, Seaborn
 
-## 📖 **API 文档**
+## 📖 **API Documentation**
 
-### **健康检查**
+### **Health Check**
 ```bash
 GET /api/health
 ```
-返回后端状态和版本信息。
+Returns backend status and version information.
 
-### **创建报价**
+### **Create Quote**
 ```bash
 POST /api/createQuote
 Content-Type: multipart/form-data
 
-file: [STEP文件]
+file: [STEP file]
 ```
-上传 STEP 文件并生成报价。
+Upload STEP file and generate quote.
 
-### **获取报价**
+### **Get Quote**
 ```bash
 GET /api/quotes/{quote_id}
 ```
-获取指定报价的详细信息。
+Get detailed information for specified quote.
 
-### **结账**
+### **Checkout**
 ```bash
 POST /api/checkout/{quote_id}
 ```
-为报价创建 Shopify 结账链接。
+Create Shopify checkout link for quote.
 
-## 🔍 **故障排除**
+## 🔍 **Troubleshooting**
 
-### **CADQuery 导入错误**
+### **CADQuery Import Error**
 ```bash
-# 确保 NumPy 版本 < 2.0
+# Ensure NumPy version < 2.0
+cd backend
 uv pip install "numpy<2.0.0"
 ```
 
-### **数据库连接失败**
-- 检查 `DATABASE_URL` 环境变量
-- 确保 PostgreSQL 服务运行中
-- 检查防火墙规则
+### **Database Connection Failed**
+- Check `DATABASE_URL` environment variable
+- Ensure PostgreSQL service is running
+- Check firewall rules
 
-### **Azure Blob 存储错误**
-- 验证 `AZURE_STORAGE_CONNECTION_STRING`
-- 确保容器已创建
-- 检查访问权限
+### **Azure Blob Storage Error**
+- Verify `AZURE_STORAGE_CONNECTION_STRING`
+- Ensure container is created
+- Check access permissions
 
-### **Shopify API 错误**
-- 验证 API 凭证
-- 检查 Shopify 店铺状态
-- 查看 API 限流日志
+### **Shopify API Error**
+- Verify API credentials
+- Check Shopify store status
+- Review API rate limit logs
 
-## 📝 **开发建议**
+## 📝 **Development Tips**
 
-1. **本地开发**: 使用 Railway 数据库避免本地 PostgreSQL 配置
-2. **环境变量**: 使用 `.env` 文件管理敏感信息
-3. **热重载**: 后端使用 `--reload`，前端自动热重载
-4. **日志查看**: 使用 `railway logs` 监控生产环境
-5. **数据分析**: 定期运行分析脚本更新定价参数
+1. **Local Development**: Use Railway database to avoid local PostgreSQL configuration
+2. **Environment Variables**: Use `.env` file to manage sensitive information
+3. **Hot Reload**: Backend uses `--reload`, frontend auto hot-reloads
+4. **Log Viewing**: Use `railway logs` to monitor production environment
+5. **Data Analysis**: Regularly run analysis scripts to update pricing parameters
 
-## 🤝 **贡献指南**
+## 🤝 **Contributing**
 
-1. Fork 项目
-2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启 Pull Request
+1. Fork the project
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
 
-## 📄 **许可证**
+## 📄 **License**
 
-本项目为私有项目。
+This is a private project.
 
-## 📧 **联系方式**
+## 📧 **Contact**
 
-如有问题，请联系项目维护者。
+For questions, please contact the project maintainer.
 
 ---
 
-**最后更新**: 2025-01-24  
-**版本**: 2.0.0  
-**构建器**: Railpack (Railway)  
-**解析器**: CADQuery 2.4.0
+**Last Updated**: 2025-01-24  
+**Version**: 2.0.0  
+**Builder**: Railpack (Railway)  
+**Parser**: CADQuery 2.4.0  
+**Development Environment**: WSL2
