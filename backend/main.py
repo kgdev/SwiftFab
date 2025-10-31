@@ -847,7 +847,7 @@ async def download_file(
     """
     try:
         # Get admin key from configuration
-        security_config = config.config.get_security_config()
+        security_config = config.get_security_config()
         ADMIN_KEY = security_config['admin_key']
         
         # Check if admin key is provided and valid
