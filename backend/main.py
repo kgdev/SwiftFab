@@ -678,9 +678,9 @@ async def get_quote_details(quote_id: str, session_id: str = Header(None, alias=
                 logger.debug(f"Using stored prices for part {part.id}: unit_price={part.unit_price}, total_price={part.total_price}")
                 
                 # Validate part data before adding
-                if part.quantity is None or part.quantity <= 0:
+                if part.quantity is None or part.quantity < 0:
                     logger.warning(f"Invalid quantity for part {part.id}: {part.quantity}")
-                    part.quantity = 1  # Default to 1 if invalid
+                    part.quantity = 0  # Default to 0 if invalid (negative not allowed)
                 
                 parts_data.append({
                     "id": part.id,
@@ -784,8 +784,8 @@ async def create_checkout(
                     body_data = {}
             
             # Validate part data
-            if part.quantity is None or part.quantity <= 0:
-                part.quantity = 1  # Default to 1 if invalid
+            if part.quantity is None or part.quantity < 0:
+                part.quantity = 0  # Default to 0 if invalid (negative not allowed)
             
             parts_data.append({
                 "id": part.id,
