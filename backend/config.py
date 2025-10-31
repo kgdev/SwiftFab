@@ -92,12 +92,6 @@ class Config:
             'port': self.get('port', 8000, 'app')
         }
     
-    def get_database_config(self) -> Dict[str, Any]:
-        """Get database configuration"""
-        return {
-            'url': self.get('url', 'sqlite:///./quotes.db', 'database')
-        }
-    
     def get_security_config(self) -> Dict[str, Any]:
         """Get security configuration"""
         return {
