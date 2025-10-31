@@ -9,6 +9,7 @@ SwiftFab/
 ├── backend/                    # Python FastAPI backend
 │   ├── main.py                # Main application
 │   ├── database.py            # Database models and connection
+│   ├── database_blob_storage.py # PostgreSQL file storage (no external blob service)
 │   ├── cadquery_step_parser.py # CADQuery STEP parser
 │   ├── final_price_calculator.py # Pricing calculator
 │   ├── shopify_integration.py  # Shopify integration
@@ -284,7 +285,10 @@ Set in Railway Dashboard:
   - Example: `https://swiftfab-backend.railway.app`
   - By default, the frontend uses relative URLs which work when both services are on the same domain
 
-That's all you need! Other services (Azure Blob, Shopify) are optional.
+**That's it!** File storage is handled by PostgreSQL (no external blob service needed).
+
+**Optional Services:**
+- Shopify credentials (only if using checkout functionality)
 
 #### **4. Add PostgreSQL Database**
 - In Railway Dashboard, click "New"
@@ -559,13 +563,45 @@ data/
 - ✅ **STEP File Parsing**: CADQuery-based STEP file analysis
 - ✅ **Automated Quote Generation**: Intelligent manufacturing quote system
 - ✅ **Shopify Integration**: Complete e-commerce integration (products, orders, checkout)
-- ✅ **Azure Blob Storage**: STEP file cloud storage
-- ✅ **PostgreSQL Database**: Quote and part data management
+- ✅ **Database File Storage**: STEP files stored directly in PostgreSQL (no external blob storage needed)
+- ✅ **PostgreSQL Database**: Quote, part data, and file management
 - ✅ **Responsive UI**: Modern React interface
 - ✅ **Health Monitoring**: Built-in health check endpoints
 - ✅ **Auto Restart**: Automatic recovery on failure
 - ✅ **Data Extraction Tools**: Fabworks API data extraction
 - ✅ **Pricing Analysis**: Machine learning pricing formula derivation
+
+## 💾 **File Storage Architecture**
+
+**No External Blob Service Required!**
+
+This project uses a **PostgreSQL-based file storage system** (`database_blob_storage.py`) that stores STEP files directly in the database as `LargeBinary` (bytea) columns. This eliminates the need for external blob storage services like Azure Blob Storage, AWS S3, or Vercel Blob.
+
+**Advantages:**
+- ✅ **Simplified Deployment**: Only need `DATABASE_URL` - no additional storage credentials
+- ✅ **Single Source of Truth**: Files and metadata stored together in PostgreSQL
+- ✅ **Transactional Integrity**: File operations participate in database transactions
+- ✅ **Railway Native**: Works perfectly with Railway's PostgreSQL service
+- ✅ **Cost Effective**: No separate blob storage billing
+
+**Implementation:**
+- Files stored in `blob_storage` table with columns: `id`, `filename`, `content_type`, `size`, `data`, `created_at`
+- Connection pooling optimized for cloud environments (Railway, Heroku, etc.)
+- API compatible with Vercel Blob API for easy migration
+- Automatic health checks validate storage functionality
+
+**Database Schema:**
+```sql
+CREATE TABLE blob_storage (
+    id VARCHAR PRIMARY KEY,
+    filename VARCHAR NOT NULL,
+    content_type VARCHAR,
+    size INTEGER NOT NULL,
+    data BYTEA NOT NULL,
+    created_at TIMESTAMP,
+    metadata_json TEXT
+);
+```
 
 ## 🛠️ **Tech Stack**
 
@@ -573,7 +609,7 @@ data/
 - **Framework**: FastAPI
 - **CAD Parsing**: CADQuery 2.4.0
 - **Database**: PostgreSQL + SQLAlchemy
-- **Storage**: Azure Blob Storage
+- **File Storage**: PostgreSQL database storage (no external blob service needed)
 - **E-commerce**: Shopify API
 - **Deployment**: Railway (Railpack)
 
@@ -633,14 +669,16 @@ uv pip install "numpy<2.0.0"
 - Check `DATABASE_URL` environment variable
 - Ensure PostgreSQL service is running
 - Check firewall rules
+- Verify database migrations have run
 
-### **Azure Blob Storage Error**
-- Verify `AZURE_STORAGE_CONNECTION_STRING`
-- Ensure container is created
-- Check access permissions
+### **File Upload/Download Error**
+- Files are stored directly in PostgreSQL database (no external storage)
+- Check database connection and permissions
+- Ensure `blob_storage` table exists
+- Check disk space if database is full
 
 ### **Shopify API Error**
-- Verify API credentials
+- Verify API credentials (only needed if using checkout)
 - Check Shopify store status
 - Review API rate limit logs
 
