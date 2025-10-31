@@ -12,6 +12,12 @@ backend/ENV/
 backend/env.bak/
 backend/venv.bak/
 
+# Virtual environments (not needed with UV)
+venv/
+.venv/
+env/
+ENV/
+
 # Deprecated/archived files
 *.deprecated
 *.archived
