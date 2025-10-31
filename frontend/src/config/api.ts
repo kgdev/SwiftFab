@@ -1,5 +1,27 @@
 // API Configuration
-const API_BASE_URL = process.env.API_BASE_URL || '';
+// For React apps, environment variables must use REACT_APP_ prefix
+// In production (Railway), the backend URL should be set via REACT_APP_API_BASE_URL
+// In development, it defaults to localhost:8000
+
+const getApiBaseUrl = (): string => {
+  // Priority 1: Use REACT_APP_API_BASE_URL if set (build-time env var)
+  if (process.env.REACT_APP_API_BASE_URL) {
+    return process.env.REACT_APP_API_BASE_URL;
+  }
+  
+  // Priority 2: In production (served by 'serve'), use window.location
+  // This allows the frontend to adapt to whatever domain it's hosted on
+  if (process.env.NODE_ENV === 'production') {
+    // If frontend and backend are on the same domain, use relative URLs
+    // Otherwise, you need to set REACT_APP_API_BASE_URL at build time
+    return '';  // Empty string means same origin (relative URLs)
+  }
+  
+  // Priority 3: Development default
+  return 'http://localhost:8000';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const API_ENDPOINTS = {
   // Quote endpoints

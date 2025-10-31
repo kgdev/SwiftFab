@@ -112,6 +112,18 @@ DATABASE_URL=postgresql://swiftfab:swiftfab123@localhost:5432/swiftfab
 
 That's it! No other environment variables are required for local development.
 
+**Optional: Frontend Environment Variables**
+
+The frontend automatically uses `http://localhost:8000` for API calls in development mode.
+
+If you need to change this, create `frontend/.env.local`:
+```bash
+# Only needed if backend is NOT on localhost:8000
+REACT_APP_API_BASE_URL=http://your-backend-url:port
+```
+
+**Note**: Environment variables in React must use the `REACT_APP_` prefix to be included in the build.
+
 ### **4. Install Backend Dependencies**
 ```bash
 cd backend
@@ -261,9 +273,16 @@ Railway will automatically detect the `railway.json` configuration files.
 
 #### **3. Configure Environment Variables**
 
+**Backend Service:**
 Set in Railway Dashboard:
 - `DATABASE_URL` - PostgreSQL connection string (automatically provided)
 - `PORT` - Port number (automatically set)
+
+**Frontend Service (Optional):**
+- `REACT_APP_API_BASE_URL` - Backend API URL (only if backend is on different domain)
+  - If frontend and backend are on the same domain, leave this unset (uses relative URLs)
+  - Example: `https://swiftfab-backend.railway.app`
+  - By default, the frontend uses relative URLs which work when both services are on the same domain
 
 That's all you need! Other services (Azure Blob, Shopify) are optional.
 
