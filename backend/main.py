@@ -166,7 +166,7 @@ async def root():
 async def health_check():
     """
     Comprehensive health check endpoint
-    Tests: API, Database, Blob Storage, Price Calculator, and FreeCAD Parser
+    Tests: API, Database, Blob Storage, Price Calculator, and CADQuery Parser
     Uses independent connections to avoid transaction issues
     """
     health_status = {
@@ -274,13 +274,13 @@ async def health_check():
             "error": type(e).__name__
         }
     
-    # Check 4: FreeCAD STEP Parser (Optional - can be disabled with SKIP_FREECAD_HEALTH_CHECK=true)
-    skip_freecad_check = os.getenv("SKIP_FREECAD_HEALTH_CHECK", "false").lower() == "true"
+    # Check 4: CADQuery STEP Parser (Optional - can be disabled with SKIP_PARSER_HEALTH_CHECK=true)
+    skip_parser_check = os.getenv("SKIP_PARSER_HEALTH_CHECK", "false").lower() == "true"
     
-    if skip_freecad_check:
-        health_status["checks"]["freecad_parser"] = {
+    if skip_parser_check:
+        health_status["checks"]["cadquery_parser"] = {
             "status": "skipped",
-            "message": "FreeCAD health check disabled (SKIP_FREECAD_HEALTH_CHECK=true)"
+            "message": "CADQuery health check disabled (SKIP_PARSER_HEALTH_CHECK=true)"
         }
     else:
         try:
@@ -308,14 +308,14 @@ END-ISO-10303-21;"""
                 test_step_path = tmp_file.name
             
             try:
-                # Test FreeCAD parser initialization
+                # Test CADQuery parser initialization
                 parser = StepParser()
                 
                 # Try to parse the test file with timeout protection
                 import signal
                 
                 def test_timeout_handler(signum, frame):
-                    raise TimeoutError("FreeCAD test timed out")
+                    raise TimeoutError("CADQuery parser test timed out")
                 
                 if hasattr(signal, 'SIGALRM'):
                     old_handler = signal.signal(signal.SIGALRM, test_timeout_handler)
@@ -331,20 +331,20 @@ END-ISO-10303-21;"""
                     
                     # Verify result structure
                     if parsed_result and isinstance(parsed_result, list) and len(parsed_result) > 0:
-                        health_status["checks"]["freecad_parser"] = {
+                        health_status["checks"]["cadquery_parser"] = {
                             "status": "healthy",
-                            "message": "FreeCAD STEP parser working correctly",
+                            "message": "CADQuery STEP parser working correctly",
                             "details": {
                                 "parser_init": "passed",
                                 "test_parse": "passed",
-                                "freecad_version": "installed"
+                                "parser_type": "CADQuery"
                             }
                         }
                     else:
                         all_healthy = False
-                        health_status["checks"]["freecad_parser"] = {
+                        health_status["checks"]["cadquery_parser"] = {
                             "status": "unhealthy",
-                            "message": "FreeCAD parser returned invalid result",
+                            "message": "CADQuery parser returned invalid result",
                             "error": "Invalid parse result structure"
                         }
                 except TimeoutError:
@@ -352,9 +352,9 @@ END-ISO-10303-21;"""
                         signal.alarm(0)
                         signal.signal(signal.SIGALRM, old_handler)
                     all_healthy = False
-                    health_status["checks"]["freecad_parser"] = {
+                    health_status["checks"]["cadquery_parser"] = {
                         "status": "unhealthy",
-                        "message": "FreeCAD parser timed out",
+                        "message": "CADQuery parser timed out",
                         "error": "TimeoutError"
                     }
             finally:
@@ -366,9 +366,9 @@ END-ISO-10303-21;"""
                         
         except Exception as e:
             all_healthy = False
-            health_status["checks"]["freecad_parser"] = {
+            health_status["checks"]["cadquery_parser"] = {
                 "status": "unhealthy",
-                "message": f"FreeCAD parser test failed: {str(e)}",
+                "message": f"CADQuery parser test failed: {str(e)}",
                 "error": type(e).__name__
             }
     
