@@ -26,14 +26,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel
 from config import config
-from sqlalchemy import create_engine, Column, String, Text, DateTime, Float, Integer, Boolean, text
-from sqlalchemy.orm import sessionmaker, Session, declarative_base
+from sqlalchemy import text
+from sqlalchemy.orm import Session
 import requests
 import urllib3
 
 from shopify_integration import ShopifyIntegration
 from shopify_oauth import ShopifyOAuth
 
+# Database
+from database import Quote, Part, get_db, safe_float_parse, engine, SessionLocal
 
 # Database blob storage for Railway
 from database_blob_storage import put, delete, get
@@ -52,76 +54,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # Initialize Shopify integration once
 shopify_integration = ShopifyIntegration()
 
-# Database setup
-# Use PostgreSQL for Railway/cloud environments
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@localhost:5432/swiftfab")
-
-# Add SSL parameters for Supabase if not already present
-if "supabase.co" in DATABASE_URL and "sslmode" not in DATABASE_URL:
-    DATABASE_URL += "?sslmode=require"
-
-# Enhanced connection pool settings for Railway
-# Prevents "connection reset by peer" errors in cloud environments
-engine = create_engine(
-    DATABASE_URL,
-    pool_pre_ping=True,           # Verify connections before using
-    pool_recycle=180,              # Recycle connections after 3 minutes (reduced from 5)
-    pool_size=3,                   # Smaller pool size for Railway (reduced from 5)
-    max_overflow=5,                # Reduced overflow (from 10)
-    pool_timeout=30,               # Timeout for getting connection from pool
-    echo_pool=False,               # Don't log pool checkouts/checkins
-    connect_args={
-        "connect_timeout": 10,     # Connection timeout in seconds
-        "options": "-c statement_timeout=30000 -c idle_in_transaction_session_timeout=60000",  # Statement and idle timeouts
-        "keepalives": 1,           # Enable TCP keepalives
-        "keepalives_idle": 30,     # Start sending keepalives after 30s
-        "keepalives_interval": 10, # Send keepalives every 10s
-        "keepalives_count": 5,     # Drop connection after 5 failed keepalives
-    }
-)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
-
-# Database Models
-class Quote(Base):
-    __tablename__ = "quotes"
-    
-    id = Column(String, primary_key=True, index=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    file_name = Column(String)
-    file_url = Column(String)  # URL to the blob storage
-    file_content = Column(Text)  # JSON string of parsed data
-    status = Column(String, default="created")
-    total_price = Column(Float, default=0.0)
-    session_id = Column(String, index=True)  # Session ID for user isolation
-
-class Part(Base):
-    __tablename__ = "parts"
-    
-    id = Column(String, primary_key=True, index=True)
-    quote_id = Column(String, index=True)
-    part_index = Column(Integer)
-    name = Column(String)  # Part name
-    material_type = Column(String)
-    material_grade = Column(String)
-    material_thickness = Column(String)
-    finish = Column(String)
-    quantity = Column(Integer, default=1)
-    custom_price = Column(Float)
-    unit_price = Column(Float, default=0.0)  # Calculated unit price
-    total_price = Column(Float, default=0.0)  # Calculated total price (unit_price * quantity)
-    body_data = Column(Text)  # JSON string of body data
-
-# Create tables
-Base.metadata.create_all(bind=engine)
-
 # Helper functions
-def safe_float_parse(value, default=0.0):
-    """Safely parse a value to float with a default fallback"""
-    try:
-        return float(value) if value is not None else default
-    except (ValueError, TypeError):
-        return default
 
 def calculate_part_price(part, body_data):
     """Calculate price for a single part using the advanced price calculator"""
@@ -201,26 +134,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Dependency to get database session with proper transaction management
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    except Exception as e:
-        logger.error(f"Database session error: {str(e)}")
-        # Rollback on any error
-        try:
-            db.rollback()
-        except Exception as rollback_error:
-            logger.error(f"Error during rollback: {rollback_error}")
-        raise
-    finally:
-        # Close the session - SQLAlchemy will handle cleanup
-        try:
-            db.close()
-        except Exception as close_error:
-            logger.error(f"Error closing database session: {close_error}")
 
 # Pydantic models
 class PartUpdate(BaseModel):
