@@ -19,7 +19,7 @@ from fabworks_api_client import FabworksAPIClient
 # Disable SSL certificate verification warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-def load_materials_data(materials_file='samples/materials.json'):
+def load_materials_data(materials_file='data/materials.json'):
     """Load materials data from specified materials.json file"""
     try:
         with open(materials_file, 'r') as f:
@@ -27,6 +27,7 @@ def load_materials_data(materials_file='samples/materials.json'):
         return data[0]['result']['data']['json']
     except FileNotFoundError:
         print(f"❌ Error: Materials file not found: {materials_file}")
+        print(f"💡 Tip: Make sure you're running from the project root or use --materials-file with an absolute path")
         return None
     except json.JSONDecodeError as e:
         print(f"❌ Error: Invalid JSON in materials file: {e}")
@@ -114,13 +115,14 @@ Examples:
     
     parser.add_argument(
         '--output-prefix', '-o',
+        default='data/',
         help='Optional prefix for output directory name'
     )
     
     parser.add_argument(
         '--materials-file', '-m',
-        default='samples/materials.json',
-        help='Path to materials.json file (default: samples/materials.json)'
+        default='data/materials.json',
+        help='Path to materials.json file (default: data/materials.json)'
     )
     
     parser.add_argument(
@@ -176,8 +178,8 @@ def main():
         print("🔌 Initializing API client...")
         # Configure proxy settings
         proxy_config = {
-            'http': 'http://10.86.98.56:8282',
-            'https': 'http://10.86.98.56:8282'
+            # 'http': 'http://10.86.98.56:8282',
+            # 'https': 'http://10.86.98.56:8282'
         }
         client = FabworksAPIClient()
         # Set proxy for the session
